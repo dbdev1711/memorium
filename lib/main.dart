@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:memo/screens/menu.dart';
 import 'styles/app_styles.dart';
-import 'screens/home.dart';
 
 void main() => runApp(const App());
 
@@ -14,7 +14,7 @@ class App extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Memorium',
       theme: AppStyles.lightTheme,
-      home: const Home(),
+      home: const Menu(),
     );
   }
 }

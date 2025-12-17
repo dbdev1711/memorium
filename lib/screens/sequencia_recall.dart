@@ -65,16 +65,22 @@ class _SequenciaRecallState extends State<SequenciaRecall> {
   void _showSequence() {
     setState(() => _isChecking = true);
 
+    // ✅ DURACIÓ DINÀMICA SEGONS NIVELL DE DIFICULTAT
+    // Usa sequenceLength com a proxy de dificultat (més elements = més difícil)
+    final int difficulty = widget.config.sequenceLength - 2; // Normalitza: 3=0, 4=1, 5=2, etc.
+    final baseDelay = 600 + (difficulty * 200); // 600ms fàcil → 1000ms difícil
+    final showDuration = 800 + (difficulty * 300); // 800ms fàcil → 1400ms difícil
+
     for (int i = 0; i < _sequence.length; i++) {
       final cardToShow = _sequence[i];
       final cardIndex = _cards.indexOf(cardToShow);
 
-      Future.delayed(Duration(milliseconds: 600 * i), () {
+      Future.delayed(Duration(milliseconds: baseDelay * i), () {
         if (!mounted) return;
         setState(() =>
             _cards[cardIndex] = cardToShow.copyWith(isFlipped: true));
       }).then((_) {
-        Future.delayed(const Duration(milliseconds: 800), () {
+        Future.delayed(Duration(milliseconds: showDuration), () {
           if (!mounted) return;
           setState(() =>
               _cards[cardIndex] = _cards[cardIndex].copyWith(isFlipped: false));
@@ -88,12 +94,6 @@ class _SequenciaRecallState extends State<SequenciaRecall> {
         });
       });
     }
-  }
-
-  void _revealAllCards() {
-    setState(() {
-      _cards = _cards.map((c) => c.copyWith(isFlipped: true)).toList();
-    });
   }
 
   void _handleCardTap(CardItem card) {
@@ -127,7 +127,6 @@ class _SequenciaRecallState extends State<SequenciaRecall> {
   }
 
   void _showGamePanel({required bool win}) {
-    _revealAllCards();
     setState(() {
       _showResultPanel = true;
       _resultColor = win ? Colors.green : Colors.red;
@@ -152,12 +151,24 @@ class _SequenciaRecallState extends State<SequenciaRecall> {
       ),
       body: Column(
         children: [
+          // ✅ TEXT NOMÉS QUAN L'USUARI HA DE REPETIR
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Text(
-              'Item: $_sequenceStep / ${_sequence.length}',
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
+            child: _isChecking
+              ? const SizedBox.shrink()
+              : Column(
+                  children: [
+                    const Text(
+                      'Repeteix la seqüència!',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Item: $_sequenceStep / ${_sequence.length}',
+                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
           ),
           Expanded(
             child: Padding(

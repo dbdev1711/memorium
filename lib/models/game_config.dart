@@ -7,7 +7,7 @@ enum GameMode {
   ),
   sequenceRecall(
     title: 'Seqüència',
-    description: 'Reprodueix l\'ordre correcte.',
+    description: 'Repeteix l\'ordre correcte.',
   ),
   numberRecall(
     title: 'Numèric',
