@@ -46,10 +46,10 @@ class _CardWidgetState extends State<CardWidget> {
           color: widget.card.isFlipped
               ? (widget.isNumberMode && widget.card.content.isEmpty
                   ? Colors.grey[200]
-                  : Colors.white)  // ← Blanc quan es gira
-              : (_pantoneColor ??= pantoneBlues[_random.nextInt(pantoneBlues.length)]),  // ← Pantone aleatori quan tapada
+                  : Colors.white)
+              : (_pantoneColor ??= pantoneBlues[_random.nextInt(pantoneBlues.length)]),
           borderRadius: BorderRadius.circular(8.0),
-          border: Border.all(color: Colors.deepPurple, width: 2),
+          border: Border.all(color: Colors.blueGrey, width: 2),
         ),
         child: Center(
           child: widget.card.isFlipped

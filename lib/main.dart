@@ -8,7 +8,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final prefs = await SharedPreferences.getInstance();
   final bool isFirstRun = prefs.getBool('isFirstRun') ?? true;
-
   runApp(App(isFirstRun: isFirstRun));
 }
 

@@ -45,34 +45,34 @@ enum GameMode {
   // Diccionari de descripcions per idioma
   static const Map<GameMode, Map<String, String>> _descriptions = {
     GameMode.classicMatch: {
-      'cat': 'Troba totes les parelles iguals.',
-      'esp': 'Encuentra todas las parejas iguales.',
-      'eng': 'Find all the matching pairs.',
+      'cat': 'Troba totes les parelles iguals',
+      'esp': 'Encuentra todas las parejas iguales',
+      'eng': 'Find all the matching pairs',
     },
     GameMode.sequenceRecall: {
-      'cat': 'Repeteix l\'ordre correcte.',
-      'esp': 'Repite el orden correcto.',
-      'eng': 'Repeat the correct order.',
+      'cat': 'Repeteix l\'ordre correcte',
+      'esp': 'Repite el orden correcto',
+      'eng': 'Repeat the correct order',
     },
     GameMode.numberRecall: {
-      'cat': 'Recorda els números per ordre.',
-      'esp': 'Recuerda los números por orden.',
-      'eng': 'Remember numbers in order.',
+      'cat': 'Recorda els números per ordre',
+      'esp': 'Recuerda los números por orden',
+      'eng': 'Remember numbers in order',
     },
     GameMode.operations: {
-      'cat': 'Calcula i ordena ascendentment.',
-      'esp': 'Calcula y ordena ascendentemente.',
-      'eng': 'Calculate and sort ascending.',
+      'cat': 'Calcula i ordena ascendentment',
+      'esp': 'Calcula y ordena ascendentemente',
+      'eng': 'Calculate and sort ascending',
     },
     GameMode.alphabetRecall: {
-      'cat': 'Recorda les lletres per ordre.',
-      'esp': 'Recuerda las letras por orden.',
-      'eng': 'Remember letters in order.',
+      'cat': 'Recorda les lletres per ordre',
+      'esp': 'Recuerda las letras por orden',
+      'eng': 'Remember letters in order',
     },
     GameMode.profile: {
-      'cat': 'Estadístiques i configuració.',
-      'esp': 'Estadísticas y configuración.',
-      'eng': 'Statistics and settings.',
+      'cat': 'Configuració i resultats',
+      'esp': 'Configuración y resultados',
+      'eng': 'Results and configuration',
     },
   };
 

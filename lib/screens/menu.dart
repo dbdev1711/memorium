@@ -17,7 +17,7 @@ class Menu extends StatefulWidget {
 }
 
 class _MenuState extends State<Menu> {
-  String _currentLang = 'cat'; // Idioma per defecte per evitar errors de null
+  String _currentLang = 'cat';
   bool _isLoading = true;
 
   @override
@@ -26,7 +26,7 @@ class _MenuState extends State<Menu> {
     _loadSettings();
   }
 
-  /// Carrega l'idioma seleccionat prèviament per l'usuari
+  /// Carrega l'idioma des de SharedPreferences
   Future<void> _loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -35,7 +35,7 @@ class _MenuState extends State<Menu> {
     });
   }
 
-  /// Gestiona la navegació passant l'idioma a la següent pantalla
+  /// Navegació cap als nivells o perfil
   void _navigateToModeSelection(BuildContext context, GameMode mode) {
     Widget targetScreen;
 
@@ -63,7 +63,11 @@ class _MenuState extends State<Menu> {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => targetScreen),
-    );
+    ).then((_) {
+      // Quan l'usuari torna al menú (per exemple des de Perfil),
+      // recarreguem l'idioma per si s'ha canviat.
+      _loadSettings();
+    });
   }
 
   @override
@@ -78,27 +82,27 @@ class _MenuState extends State<Menu> {
         title: const Text('Memorium', style: AppStyles.appBarText),
         centerTitle: true,
       ),
-      body: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+      body: SizedBox(
+        width: double.infinity, // Ocupa tot l'ample per centrar els fills
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center, // Centra els botons
             children: [
-              const SizedBox(height: 20),
-              // Generem la llista de botons dinàmicament a partir de l'Enum
+              const SizedBox(height: 30),
               ...GameMode.values.map((mode) {
                 return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  padding: const EdgeInsets.symmetric(vertical: 10.0),
                   child: ElevatedButton(
                     onPressed: () => _navigateToModeSelection(context, mode),
                     style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(160, 80),
+                      fixedSize: const Size(280, 90),
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
                       ),
+                      elevation: 4,
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -106,19 +110,22 @@ class _MenuState extends State<Menu> {
                         Text(
                           mode.getTitle(_currentLang),
                           style: AppStyles.menuButtonTitle,
+                          textAlign: TextAlign.center,
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 6),
                         Text(
                           mode.getDescription(_currentLang),
                           style: AppStyles.menuButtonDesc,
                           textAlign: TextAlign.center,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),
                   ),
                 );
               }).toList(),
-              const SizedBox(height: 20),
+              const SizedBox(height: 30),
             ],
           ),
         ),

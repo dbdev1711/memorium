@@ -14,7 +14,6 @@ class _ProfileState extends State<Profile> {
   final TextEditingController _nomController = TextEditingController();
   String _selectedLanguage = 'cat';
 
-  // Map per guardar els resultats dels jocs
   Map<String, int> _results = {
     'alphabet': 0,
     'number': 0,
@@ -29,14 +28,12 @@ class _ProfileState extends State<Profile> {
     _loadLocalData();
   }
 
-  // Carrega idioma, nom i resultats des de SharedPreferences
   Future<void> _loadLocalData() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       _selectedLanguage = prefs.getString('language') ?? 'cat';
       _nomController.text = prefs.getString('user_name') ?? '';
 
-      // Carreguem les puntuacions (0 si no existeixen)
       _results['alphabet'] = prefs.getInt('score_alphabet') ?? 0;
       _results['number'] = prefs.getInt('score_number') ?? 0;
       _results['operations'] = prefs.getInt('score_operations') ?? 0;
@@ -45,21 +42,35 @@ class _ProfileState extends State<Profile> {
     });
   }
 
-  // Desa nom i idioma localment
   Future<void> _saveSettings() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('language', _selectedLanguage);
     await prefs.setString('user_name', _nomController.text);
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(_selectedLanguage == 'cat' ? 'Guardat!' : '¡Guardado!')),
+      SnackBar(content: Text(_selectedLanguage == 'cat' ? 'Guardat!' :
+      _selectedLanguage == 'esp' ? '¡Guardado!' : 'Saved!')),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final String title = _selectedLanguage == 'cat' ? 'El meu Perfil' : _selectedLanguage == 'esp' ? 'Mi Perfil' : 'My Profile';
-    final String gamesTitle = _selectedLanguage == 'cat' ? 'Rècords Personals' : 'Récords Personales';
+    final String title = _selectedLanguage == 'cat' ? 'Perfil' : _selectedLanguage == 'esp' ? 'Perfil' : 'Profile';
+    final String gamesTitle = _selectedLanguage == 'cat' ? 'Resultats' : _selectedLanguage == 'esp' ? 'Resultados' : 'Results';
+
+    InputDecoration _inputStyle(String label, IconData icon) {
+      return InputDecoration(
+        labelText: label,
+        labelStyle: const TextStyle(color: Colors.black),
+        prefixIcon: Icon(icon, color: Colors.black),
+        focusedBorder: const UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.black, width: 2.0),
+        ),
+        enabledBorder: const UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.grey),
+        ),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(title: Text(title, style: AppStyles.appBarText), centerTitle: true),
@@ -67,35 +78,49 @@ class _ProfileState extends State<Profile> {
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            // SECCIÓ DADES PERSONALS
             Card(
               elevation: 4,
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [
+                    // NOM
                     TextField(
                       controller: _nomController,
-                      decoration: InputDecoration(
-                        labelText: _selectedLanguage == 'cat' ? 'Nom' : 'Nombre',
-                        prefixIcon: const Icon(Icons.edit),
+                      cursorColor: Colors.black,
+                      textCapitalization: TextCapitalization.words,
+                      decoration: _inputStyle(
+                        _selectedLanguage == 'cat' ? 'Nom' : _selectedLanguage == 'esp' ? 'Nombre' : 'Name',
+                        Icons.edit
                       ),
                     ),
                     const SizedBox(height: 20),
-                    DropdownButtonFormField<String>(
-                      value: _selectedLanguage,
-                      decoration: InputDecoration(labelText: _selectedLanguage == 'cat' ? 'Idioma' : 'Idioma'),
-                      items: const [
-                        DropdownMenuItem(value: 'cat', child: Text('Català')),
-                        DropdownMenuItem(value: 'esp', child: Text('Español')),
-                        DropdownMenuItem(value: 'eng', child: Text('English')),
-                      ],
-                      onChanged: (val) => setState(() => _selectedLanguage = val!),
+                    Theme(
+                      data: Theme.of(context).copyWith(
+                        colorScheme: const ColorScheme.light(primary: Colors.black),
+                      ),
+                      child: DropdownButtonFormField<String>(
+                        initialValue: _selectedLanguage,
+                        decoration: _inputStyle(
+                          _selectedLanguage == 'cat' ? 'Idioma' : _selectedLanguage == 'esp' ? 'Idioma' : 'Language',
+                          Icons.language
+                        ),
+                        items: const [
+                          DropdownMenuItem(value: 'cat', child: Text('Català')),
+                          DropdownMenuItem(value: 'esp', child: Text('Español')),
+                          DropdownMenuItem(value: 'eng', child: Text('English')),
+                        ],
+                        onChanged: (val) => setState(() => _selectedLanguage = val!),
+                      ),
                     ),
                     const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: _saveSettings,
-                      child: Text(_selectedLanguage == 'cat' ? 'Guardar Canvis' : 'Guardar Cambios'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black, // Botó negre
+                        foregroundColor: Colors.white, // Text blanc
+                      ),
+                      child: Text(_selectedLanguage == 'cat' ? 'Guardar' : _selectedLanguage == 'esp' ? 'Guardar': 'Save'),
                     )
                   ],
                 ),
@@ -103,14 +128,14 @@ class _ProfileState extends State<Profile> {
             ),
             const SizedBox(height: 30),
 
-            // SECCIÓ RESULTATS JOCS
-            Text(gamesTitle, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.blueGrey)),
-            const Divider(),
-            _buildResultTile('Alphabet Recall', _results['alphabet']!, Icons.abc),
-            _buildResultTile('Number Recall', _results['number']!, Icons.numbers),
-            _buildResultTile('Operations', _results['operations']!, Icons.calculate),
-            _buildResultTile('Parelles', _results['parelles']!, Icons.extension),
-            _buildResultTile('Seqüència', _results['sequencia']!, Icons.repeat),
+            Text(gamesTitle, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black)),
+            const Divider(color: Colors.black26),
+
+            _buildResultTile(_selectedLanguage == 'cat' ? 'Alfabètic' : _selectedLanguage == 'esp' ? 'Alfabético' : 'Alphabetic', _results['alphabet']!, Icons.abc),
+            _buildResultTile(_selectedLanguage == 'cat' ? 'Numèric' : _selectedLanguage == 'esp' ? 'Numérico' : 'Numbers', _results['number']!, Icons.numbers),
+            _buildResultTile(_selectedLanguage == 'cat' ? 'Operacions' : _selectedLanguage == 'esp' ? 'Operaciones' : 'Operations', _results['operations']!, Icons.calculate),
+            _buildResultTile(_selectedLanguage == 'cat' ? 'Parelles' : _selectedLanguage == 'esp' ? 'Parejas' : 'Pairs', _results['parelles']!, Icons.extension),
+            _buildResultTile(_selectedLanguage == 'cat' ? 'Seqüència' : _selectedLanguage == 'esp' ? 'Secuencia' : 'Sequence', _results['sequencia']!, Icons.repeat),
           ],
         ),
       ),
@@ -119,11 +144,11 @@ class _ProfileState extends State<Profile> {
 
   Widget _buildResultTile(String gameName, int score, IconData icon) {
     return ListTile(
-      leading: Icon(icon, color: Colors.blue),
-      title: Text(gameName),
+      leading: Icon(icon, color: Colors.black87),
+      title: Text(gameName, style: const TextStyle(fontWeight: FontWeight.w500)),
       trailing: Text(
         '$score',
-        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.green),
+        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blueAccent),
       ),
     );
   }
