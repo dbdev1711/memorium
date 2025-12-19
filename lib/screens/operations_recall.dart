@@ -147,9 +147,9 @@ class _OperationsRecallState extends State<OperationsRecall> {
                 ? '❌ Error'
                 : '❌ Error';
         _resultMessage = widget.language == 'cat'
-            ? 'L\'ordre no era correcte.'
+            ? 'L\'ordre no és correcte.'
             : widget.language == 'esp'
-                ? 'El orden no era correcto.'
+                ? 'El orden no es correcto.'
                 : 'The order was incorrect.';
       }
     });
@@ -162,7 +162,9 @@ class _OperationsRecallState extends State<OperationsRecall> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Operacions',
+          widget.language == 'cat' ? 'Operacions'
+              : widget.language == 'esp' ? 'Operaciones'
+              : 'Operations',
           style: AppStyles.appBarText,
         ),
         centerTitle: true,

@@ -153,7 +153,7 @@ class _SequenciaRecallState extends State<SequenciaRecall> {
   @override
   Widget build(BuildContext context) {
     String appBarTitle = widget.language == 'cat' ? 'Seqüència' : widget.language == 'esp' ? 'Secuencia' : 'Sequence';
-    String instructionText = widget.language == 'cat' ? 'Repeteix la seqüència!' : widget.language == 'esp' ? '¡Repite la secuencia!' : 'Repeat the sequence!';
+    String instructionText = widget.language == 'cat' ? 'Repeteix la seqüència' : widget.language == 'esp' ? 'Repite la secuencia' : 'Repeat the sequence';
     String stepLabel = widget.language == 'cat' ? 'Pas' : widget.language == 'esp' ? 'Paso' : 'Step';
 
     return Scaffold(
