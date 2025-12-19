@@ -31,7 +31,7 @@ class SequenciaLevel extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: _getConfigs().map((config) {
             return Padding(
-              padding: const EdgeInsets.all(15),
+              padding: const EdgeInsets.all(20),
               child: ElevatedButton(
                 onPressed: () => Navigator.push(context, MaterialPageRoute(
                   builder: (context) => SequenciaRecall(config: config, language: language))),

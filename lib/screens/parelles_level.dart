@@ -11,12 +11,24 @@ class ParellesLevel extends StatelessWidget {
 
   List<GameConfig> _getConfigs() {
     return [
-      GameConfig(mode: GameMode.classicMatch, rows: 4, columns: 4,
-        levelTitle: language == 'cat' ? 'Fàcil (4x4)' : language == 'esp' ? 'Fácil (4x4)' : 'Easy (4x4)'),
-      GameConfig(mode: GameMode.classicMatch, rows: 6, columns: 6,
-        levelTitle: language == 'cat' ? 'Mitjà (6x6)' : language == 'esp' ? 'Medio (6x6)' : 'Medium (6x6)'),
-      GameConfig(mode: GameMode.classicMatch, rows: 8, columns: 8,
-        levelTitle: language == 'cat' ? 'Difícil (8x8)' : language == 'esp' ? 'Difícil (8x8)' : 'Hard (8x8)'),
+      GameConfig(
+        mode: GameMode.classicMatch,
+        rows: 2,
+        columns: 2,
+        levelTitle: language == 'cat' ? 'Fàcil (2x2)' : language == 'esp' ? 'Fácil (2x2)' : 'Easy (2x2)'
+      ),
+      GameConfig(
+        mode: GameMode.classicMatch,
+        rows: 4,
+        columns: 4,
+        levelTitle: language == 'cat' ? 'Mitjà (4x4)' : language == 'esp' ? 'Medio (4x4)' : 'Medium (4x4)'
+      ),
+      GameConfig(
+        mode: GameMode.classicMatch,
+        rows: 6,
+        columns: 6,
+        levelTitle: language == 'cat' ? 'Difícil (6x6)' : language == 'esp' ? 'Difícil (6x6)' : 'Hard (6x6)'
+      ),
     ];
   }
 
@@ -24,7 +36,10 @@ class ParellesLevel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(language == 'cat' ? 'Nivell' : language == 'esp' ? 'Nivel' : 'Level', style: AppStyles.appBarText),
+        title: Text(
+          language == 'cat' ? 'Nivell' : language == 'esp' ? 'Nivel' : 'Level',
+          style: AppStyles.appBarText
+        ),
       ),
       body: Center(
         child: Column(
@@ -33,8 +48,12 @@ class ParellesLevel extends StatelessWidget {
             return Padding(
               padding: const EdgeInsets.all(20),
               child: ElevatedButton(
-                onPressed: () => Navigator.push(context, MaterialPageRoute(
-                  builder: (context) => ParellesRecall(config: config, language: language))),
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ParellesRecall(config: config, language: language)
+                  )
+                ),
                 style: ElevatedButton.styleFrom(minimumSize: const Size(200, 60)),
                 child: Text(config.levelTitle, style: AppStyles.levelText),
               ),
