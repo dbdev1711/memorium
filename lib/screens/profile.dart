@@ -14,11 +14,10 @@ class _ProfileState extends State<Profile> {
   final TextEditingController _nomController = TextEditingController();
   String _selectedLanguage = 'cat';
 
-  // dynamic permet emmagatzemar tant int (puntuacions) com String (temps)
   Map<String, dynamic> _results = {
     'alphabet': 0,
     'number': 0,
-    'operations': 0,
+    'operations': '--',
     'parelles': '--',
     'sequencia': 0,
   };
@@ -37,16 +36,13 @@ class _ProfileState extends State<Profile> {
 
       _results['alphabet'] = prefs.getInt('score_alphabet') ?? 0;
       _results['number'] = prefs.getInt('score_number') ?? 0;
-      _results['operations'] = prefs.getInt('score_operations') ?? 0;
       _results['sequencia'] = prefs.getInt('score_sequencia') ?? 0;
 
-      // Gestionem el temps de les parelles
-      int? timeMillis = prefs.getInt('time_parelles');
-      if (timeMillis != null) {
-        _results['parelles'] = _formatMillis(timeMillis);
-      } else {
-        _results['parelles'] = '--';
-      }
+      int? timeParelles = prefs.getInt('time_parelles');
+      _results['parelles'] = timeParelles != null ? _formatMillis(timeParelles) : '--';
+
+      int? timeOps = prefs.getInt('time_operations');
+      _results['operations'] = timeOps != null ? _formatMillis(timeOps) : '--';
     });
   }
 
@@ -61,29 +57,16 @@ class _ProfileState extends State<Profile> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('language', _selectedLanguage);
     await prefs.setString('user_name', _nomController.text);
-
     if (!mounted) return;
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: Colors.lightBlue,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        content: Text(
-          _selectedLanguage == 'cat' ? 'Guardat!' :
-          _selectedLanguage == 'esp' ? '¡Guardado!' : 'Saved!',
-          style: AppStyles.profileSnackBar
-        ),
-      ),
-    );
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor: Colors.lightBlue, content: Text('Guardat!', style: AppStyles.profileSnackBar)));
   }
 
   @override
   Widget build(BuildContext context) {
-    final String title = _selectedLanguage == 'cat' ? 'Perfil' : _selectedLanguage == 'esp' ? 'Perfil' : 'Profile';
-    final String resultsLabel = _selectedLanguage == 'cat' ? 'Resultats' : _selectedLanguage == 'esp' ? 'Resultados' : 'Results';
+    final String resultsLabel = _selectedLanguage == 'cat' ? 'Resultats' : 'Results';
 
     return Scaffold(
-      appBar: AppBar(title: Text(title, style: AppStyles.appBarText), centerTitle: true),
+      appBar: AppBar(title: Text(_selectedLanguage == 'cat' ? 'Perfil' : 'Profile', style: AppStyles.appBarText), centerTitle: true),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -94,31 +77,11 @@ class _ProfileState extends State<Profile> {
             const Divider(color: Colors.black26, thickness: 1),
             AppStyles.sizedBoxHeight10,
 
-            _buildResultTile(
-              _selectedLanguage == 'cat' ? 'Alfabètic' : _selectedLanguage == 'esp' ? 'Alfabético' : 'Alphabetic',
-              _results['alphabet'],
-              Icons.abc_rounded
-            ),
-            _buildResultTile(
-              _selectedLanguage == 'cat' ? 'Numèric' : _selectedLanguage == 'esp' ? 'Numérico' : 'Numbers',
-              _results['number'],
-              Icons.onetwothree_rounded
-            ),
-            _buildResultTile(
-              _selectedLanguage == 'cat' ? 'Operacions' : _selectedLanguage == 'esp' ? 'Operaciones' : 'Operations',
-              _results['operations'],
-              Icons.calculate_rounded
-            ),
-            _buildResultTile(
-              _selectedLanguage == 'cat' ? 'Parelles' : _selectedLanguage == 'esp' ? 'Parejas' : 'Pairs',
-              _results['parelles'],
-              Icons.grid_view_rounded
-            ),
-            _buildResultTile(
-              _selectedLanguage == 'cat' ? 'Seqüència' : _selectedLanguage == 'esp' ? 'Secuencia' : 'Sequence',
-              _results['sequencia'],
-              Icons.route_rounded
-            ),
+            _buildResultTile('Alfabètic', _results['alphabet'], Icons.abc_rounded),
+            _buildResultTile('Numèric', _results['number'], Icons.onetwothree_rounded),
+            _buildResultTile('Operacions', _results['operations'], Icons.calculate_rounded),
+            _buildResultTile('Parelles', _results['parelles'], Icons.grid_view_rounded),
+            _buildResultTile('Seqüència', _results['sequencia'], Icons.route_rounded),
           ],
         ),
       ),
@@ -127,39 +90,20 @@ class _ProfileState extends State<Profile> {
 
   Widget _buildSettingsCard() {
     return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      elevation: 4, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            TextField(
-              controller: _nomController,
-              decoration: InputDecoration(
-                labelText: _selectedLanguage == 'cat' ? 'Nom' : 'Name',
-                prefixIcon: const Icon(Icons.edit)
-              ),
-            ),
+            TextField(controller: _nomController, decoration: const InputDecoration(labelText: 'Nom', prefixIcon: Icon(Icons.edit))),
             AppStyles.sizedBoxHeight20,
             DropdownButtonFormField<String>(
               value: _selectedLanguage,
-              decoration: InputDecoration(
-                labelText: _selectedLanguage == 'cat' ? 'Idioma' : 'Language',
-                prefixIcon: const Icon(Icons.language)
-              ),
-              items: const [
-                DropdownMenuItem(value: 'cat', child: Text('Català')),
-                DropdownMenuItem(value: 'esp', child: Text('Español')),
-                DropdownMenuItem(value: 'eng', child: Text('English')),
-              ],
+              items: const [DropdownMenuItem(value: 'cat', child: Text('Català')), DropdownMenuItem(value: 'esp', child: Text('Español')), DropdownMenuItem(value: 'eng', child: Text('English'))],
               onChanged: (val) => setState(() => _selectedLanguage = val!),
             ),
             AppStyles.sizedBoxHeight20,
-            ElevatedButton(
-              onPressed: _saveSettings,
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.black, foregroundColor: Colors.white),
-              child: Text(_selectedLanguage == 'cat' ? 'Guardar' : 'Save'),
-            )
+            ElevatedButton(onPressed: _saveSettings, style: ElevatedButton.styleFrom(backgroundColor: Colors.black, foregroundColor: Colors.white), child: const Text('Guardar')),
           ],
         ),
       ),
@@ -169,31 +113,14 @@ class _ProfileState extends State<Profile> {
   Widget _buildResultTile(String gameName, dynamic score, IconData icon) {
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-      ),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         leading: Icon(icon, color: Colors.black87, size: 35),
-        title: Text(
-          gameName,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500)
-        ),
+        title: Text(gameName, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
         trailing: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          decoration: BoxDecoration(
-            color: Colors.blueAccent.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Text(
-            '$score',
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.blueAccent
-            ),
-          ),
+          decoration: BoxDecoration(color: Colors.blueAccent.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(20)),
+          child: Text('$score', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blueAccent)),
         ),
       ),
     );
