@@ -40,9 +40,26 @@ class AppStyles {
     color: Colors.white
   );
 
+  static const profileSnackBar = TextStyle(
+    fontSize: 15,
+    fontWeight: FontWeight.bold,
+    color: Colors.white
+  );
+
   static const levelText = TextStyle(
     fontSize: 25,
     color: Colors.white
+  );
+
+  static const saveButton = TextStyle(
+    fontSize: 18,
+    color: Colors.white
+  );
+
+  static const resultsProfile = TextStyle(
+    fontSize: 30,
+    color: Colors.black,
+    fontWeight: FontWeight.bold
   );
 
   static const textButtonDialog = TextStyle(
@@ -128,7 +145,9 @@ class AppStyles {
   static const sizedBoxHeight10 = SizedBox(height: 10);
   static const sizedBoxHeight20 = SizedBox(height: 20);
   static const sizedBoxHeight40 = SizedBox(height: 40);
+  static const sizedBoxHeight50 = SizedBox(height: 50);
   static const sizedBoxHeight60 = SizedBox(height: 60);
+  static const sizedBoxHeight70 = SizedBox(height: 70);
   static const sizedBoxHeight80 = SizedBox(height: 80);
   static const sizedBoxHeight100 = SizedBox(height: 100);
 

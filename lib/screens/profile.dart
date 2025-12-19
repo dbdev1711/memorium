@@ -47,16 +47,26 @@ class _ProfileState extends State<Profile> {
     await prefs.setString('language', _selectedLanguage);
     await prefs.setString('user_name', _nomController.text);
 
+    if (!mounted) return;
+
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(_selectedLanguage == 'cat' ? 'Guardat!' :
-      _selectedLanguage == 'esp' ? '¡Guardado!' : 'Saved!')),
+      SnackBar(
+        backgroundColor: Colors.lightBlue,
+        //behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        content: Text(
+          _selectedLanguage == 'cat' ? 'Guardat!' :
+          _selectedLanguage == 'esp' ? '¡Guardado!' : 'Saved!',
+          style: AppStyles.profileSnackBar
+        ),
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final String title = _selectedLanguage == 'cat' ? 'Perfil' : _selectedLanguage == 'esp' ? 'Perfil' : 'Profile';
-    final String gamesTitle = _selectedLanguage == 'cat' ? 'Resultats' : _selectedLanguage == 'esp' ? 'Resultados' : 'Results';
+    final String results = _selectedLanguage == 'cat' ? 'Resultats' : _selectedLanguage == 'esp' ? 'Resultados' : 'Results';
 
     InputDecoration _inputStyle(String label, IconData icon) {
       return InputDecoration(
@@ -80,11 +90,11 @@ class _ProfileState extends State<Profile> {
           children: [
             Card(
               elevation: 4,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [
-                    // NOM
                     TextField(
                       controller: _nomController,
                       cursorColor: Colors.black,
@@ -94,7 +104,7 @@ class _ProfileState extends State<Profile> {
                         Icons.edit
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    AppStyles.sizedBoxHeight20,
                     Theme(
                       data: Theme.of(context).copyWith(
                         colorScheme: const ColorScheme.light(primary: Colors.black),
@@ -113,29 +123,53 @@ class _ProfileState extends State<Profile> {
                         onChanged: (val) => setState(() => _selectedLanguage = val!),
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    AppStyles.sizedBoxHeight20,
                     ElevatedButton(
                       onPressed: _saveSettings,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black, // Botó negre
-                        foregroundColor: Colors.white, // Text blanc
+                        backgroundColor: Colors.black,
+                        foregroundColor: Colors.white,
+                        minimumSize: const Size(100, 45),
                       ),
-                      child: Text(_selectedLanguage == 'cat' ? 'Guardar' : _selectedLanguage == 'esp' ? 'Guardar': 'Save'),
+                      child: Text(
+                        _selectedLanguage == 'cat' ? 'Guardar' : _selectedLanguage == 'esp' ? 'Guardar' : 'Save',
+                        style: AppStyles.saveButton
+                      ),
                     )
                   ],
                 ),
               ),
             ),
-            const SizedBox(height: 30),
+            AppStyles.sizedBoxHeight50,
+            Text(results, style: AppStyles.resultsProfile),
+            const Divider(color: Colors.black26, thickness: 1),
+            AppStyles.sizedBoxHeight10,
 
-            Text(gamesTitle, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black)),
-            const Divider(color: Colors.black26),
-
-            _buildResultTile(_selectedLanguage == 'cat' ? 'Alfabètic' : _selectedLanguage == 'esp' ? 'Alfabético' : 'Alphabetic', _results['alphabet']!, Icons.abc),
-            _buildResultTile(_selectedLanguage == 'cat' ? 'Numèric' : _selectedLanguage == 'esp' ? 'Numérico' : 'Numbers', _results['number']!, Icons.numbers),
-            _buildResultTile(_selectedLanguage == 'cat' ? 'Operacions' : _selectedLanguage == 'esp' ? 'Operaciones' : 'Operations', _results['operations']!, Icons.calculate),
-            _buildResultTile(_selectedLanguage == 'cat' ? 'Parelles' : _selectedLanguage == 'esp' ? 'Parejas' : 'Pairs', _results['parelles']!, Icons.extension),
-            _buildResultTile(_selectedLanguage == 'cat' ? 'Seqüència' : _selectedLanguage == 'esp' ? 'Secuencia' : 'Sequence', _results['sequencia']!, Icons.repeat),
+            _buildResultTile(
+              _selectedLanguage == 'cat' ? 'Alfabètic' : _selectedLanguage == 'esp' ? 'Alfabético' : 'Alphabetic',
+              _results['alphabet']!,
+              Icons.abc_rounded
+            ),
+            _buildResultTile(
+              _selectedLanguage == 'cat' ? 'Numèric' : _selectedLanguage == 'esp' ? 'Numérico' : 'Numbers',
+              _results['number']!,
+              Icons.onetwothree_rounded
+            ),
+            _buildResultTile(
+              _selectedLanguage == 'cat' ? 'Operacions' : _selectedLanguage == 'esp' ? 'Operaciones' : 'Operations',
+              _results['operations']!,
+              Icons.calculate_rounded
+            ),
+            _buildResultTile(
+              _selectedLanguage == 'cat' ? 'Parelles' : _selectedLanguage == 'esp' ? 'Parejas' : 'Pairs',
+              _results['parelles']!,
+              Icons.grid_view_rounded
+            ),
+            _buildResultTile(
+              _selectedLanguage == 'cat' ? 'Seqüència' : _selectedLanguage == 'esp' ? 'Secuencia' : 'Sequence',
+              _results['sequencia']!,
+              Icons.route_rounded
+            ),
           ],
         ),
       ),
@@ -143,12 +177,38 @@ class _ProfileState extends State<Profile> {
   }
 
   Widget _buildResultTile(String gameName, int score, IconData icon) {
-    return ListTile(
-      leading: Icon(icon, color: Colors.black87),
-      title: Text(gameName, style: const TextStyle(fontWeight: FontWeight.w500)),
-      trailing: Text(
-        '$score',
-        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blueAccent),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        leading: Icon(
+          icon,
+          color: Colors.black87,
+          size: 35
+        ),
+        title: Text(
+          gameName,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500)
+        ),
+        trailing: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            color: Colors.blueAccent.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Text(
+            '$score',
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.blueAccent
+            ),
+          ),
+        ),
       ),
     );
   }

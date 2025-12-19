@@ -11,12 +11,30 @@ class OperationsLevel extends StatelessWidget {
 
   List<GameConfig> _getConfigs() {
     return [
-      GameConfig(mode: GameMode.operations, sequenceLength: 4,
-        levelTitle: language == 'cat' ? 'Fàcil (4 op.)' : language == 'esp' ? 'Fácil (4 op.)' : 'Easy (4 op.)'),
-      GameConfig(mode: GameMode.operations, sequenceLength: 6,
-        levelTitle: language == 'cat' ? 'Mitjà (6 op.)' : language == 'esp' ? 'Medio (6 op.)' : 'Medium (6 op.)'),
-      GameConfig(mode: GameMode.operations, sequenceLength: 8,
-        levelTitle: language == 'cat' ? 'Difícil (8 op.)' : language == 'esp' ? 'Difícil (8 op.)' : 'Hard (8 op.)'),
+      // FÀCIL: 2 operacions
+      GameConfig(
+        mode: GameMode.operations,
+        rows: 2,  // ← AFEGEIX AIXÒ
+        sequenceLength: 4,
+        levelTitle: language == 'cat' ? 'Fàcil (2 op.)' :
+                  language == 'esp' ? 'Fácil (2 op.)' : 'Easy (2 op.)',
+      ),
+      // MITJÀ: 4 operacions
+      GameConfig(
+        mode: GameMode.operations,
+        rows: 4,  // ← AFEGEIX AIXÒ
+        sequenceLength: 6,
+        levelTitle: language == 'cat' ? 'Mitjà (4 op.)' :
+                  language == 'esp' ? 'Medio (4 op.)' : 'Medium (4 op.)',
+      ),
+      // DIFÍCIL: 6 operacions
+      GameConfig(
+        mode: GameMode.operations,
+        rows: 6,  // ← AFEGEIX AIXÒ
+        sequenceLength: 8,
+        levelTitle: language == 'cat' ? 'Difícil (6 op.)' :
+                  language == 'esp' ? 'Difícil (6 op.)' : 'Hard (6 op.)',
+      ),
     ];
   }
 
@@ -24,7 +42,10 @@ class OperationsLevel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(language == 'cat' ? 'Nivell' : language == 'esp' ? 'Nivel' : 'Level', style: AppStyles.appBarText),
+        title: Text(
+          language == 'Nivell' ? 'cat' : language == 'esp' ? 'Nivel' : 'Level',
+          style: AppStyles.appBarText,
+        ),
       ),
       body: Center(
         child: Column(
@@ -33,8 +54,15 @@ class OperationsLevel extends StatelessWidget {
             return Padding(
               padding: const EdgeInsets.all(20),
               child: ElevatedButton(
-                onPressed: () => Navigator.push(context, MaterialPageRoute(
-                  builder: (context) => OperationsRecall(config: config, language: language))),
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => OperationsRecall(
+                      config: config,
+                      language: language
+                    )
+                  )
+                ),
                 style: ElevatedButton.styleFrom(minimumSize: const Size(250, 60)),
                 child: Text(config.levelTitle, style: AppStyles.levelText),
               ),

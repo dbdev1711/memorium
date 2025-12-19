@@ -8,12 +8,12 @@ import '../widgets/result_panel.dart';
 
 class SequenciaRecall extends StatefulWidget {
   final GameConfig config;
-  final String language; // Afegit
+  final String language;
 
   const SequenciaRecall({
     Key? key,
     required this.config,
-    required this.language, // Afegit
+    required this.language,
   }) : super(key: key);
 
   @override
@@ -111,7 +111,8 @@ class _SequenciaRecallState extends State<SequenciaRecall> {
       if (_sequenceStep == _sequence.length) {
         _isChecking = true;
         _showGamePanel(win: true);
-      } else {
+      }
+      else {
         Future.delayed(const Duration(milliseconds: 300), () {
           if (!mounted) return;
           setState(() {
@@ -137,7 +138,8 @@ class _SequenciaRecallState extends State<SequenciaRecall> {
             : widget.language == 'esp'
                 ? '¡Has completado la secuencia con éxito!'
                 : 'You have successfully completed the sequence!';
-      } else {
+      }
+      else {
         _resultTitle = widget.language == 'cat' ? '❌ Seqüència incorrecta!' : widget.language == 'esp' ? '❌ Secuencia incorrecta!' : '❌ Incorrect sequence!';
         _resultMessage = widget.language == 'cat'
             ? 'Ho pots fer millor! Torna-ho a provar.'
@@ -160,7 +162,7 @@ class _SequenciaRecallState extends State<SequenciaRecall> {
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
-            onPressed: _isChecking ? null : _initializeGame,
+            onPressed: _initializeGame,
           ),
         ],
       ),
@@ -169,7 +171,7 @@ class _SequenciaRecallState extends State<SequenciaRecall> {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: _isChecking
-              ? const SizedBox(height: 70) // Espaiador per mantenir el layout
+              ? AppStyles.sizedBoxHeight70
               : Column(
                   children: [
                     Text(

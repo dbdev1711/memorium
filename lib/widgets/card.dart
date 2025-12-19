@@ -20,18 +20,17 @@ class CardWidget extends StatefulWidget {
 }
 
 class _CardWidgetState extends State<CardWidget> {
-  // Colors Pantone Blau
   final List<Color> pantoneBlues = [
-    const Color(0xFF0038A8), // Pantone 288C
-    const Color(0xFF0057B7), // Pantone 299C
-    const Color(0xFF00AEEF), // Pantone 2995C
-    const Color(0xFF1974D2), // Pantone 293C
-    const Color(0xFF1E90FF), // Pantone 300C
-    const Color(0xFF4169E1), // Pantone 2728C
-    const Color(0xFF4682B4), // Pantone 652C
-    const Color(0xFF6495ED), // Pantone 279C
-    const Color(0xFF87CEEB), // Pantone Sky Blue
-    const Color(0xFF87CEFA), // Pantone 2975C
+    const Color(0xFF0038A8),
+    const Color(0xFF0057B7),
+    const Color(0xFF00AEEF),
+    const Color(0xFF1974D2),
+    const Color(0xFF1E90FF),
+    const Color(0xFF4169E1),
+    const Color(0xFF4682B4),
+    const Color(0xFF6495ED),
+    const Color(0xFF87CEEB),
+    const Color(0xFF87CEFA),
   ];
 
   final Random _random = Random();
