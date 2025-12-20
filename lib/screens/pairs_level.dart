@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import '../models/game_config.dart';
 import '../styles/app_styles.dart';
-import 'parelles_recall.dart';
+import 'pairs_recall.dart';
 
-class ParellesLevel extends StatelessWidget {
+class PairsLevel extends StatelessWidget {
   final GameMode mode;
   final String language;
 
-  const ParellesLevel({Key? key, required this.mode, required this.language}) : super(key: key);
+  const PairsLevel({Key? key, required this.mode, required this.language}) : super(key: key);
 
   List<GameConfig> _getConfigs() {
     return [
@@ -51,7 +51,7 @@ class ParellesLevel extends StatelessWidget {
                 onPressed: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ParellesRecall(config: config, language: language)
+                    builder: (context) => PairsRecall(config: config, language: language)
                   )
                 ),
                 style: ElevatedButton.styleFrom(minimumSize: const Size(200, 60)),

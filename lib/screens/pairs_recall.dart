@@ -8,21 +8,21 @@ import '../models/game_config.dart';
 import '../styles/app_styles.dart';
 import '../widgets/card.dart';
 
-class ParellesRecall extends StatefulWidget {
+class PairsRecall extends StatefulWidget {
   final GameConfig config;
   final String language;
 
-  const ParellesRecall({
+  const PairsRecall({
     Key? key,
     required this.config,
     required this.language,
   }) : super(key: key);
 
   @override
-  State<ParellesRecall> createState() => _ParellesRecallState();
+  State<PairsRecall> createState() => _PairsRecallState();
 }
 
-class _ParellesRecallState extends State<ParellesRecall> {
+class _PairsRecallState extends State<PairsRecall> {
   List<CardItem> _cards = [];
   List<CardItem> _flippedCards = [];
   int _matchesFound = 0;
@@ -155,7 +155,7 @@ class _ParellesRecallState extends State<ParellesRecall> {
   void _showGamePanel({required bool win}) {
     if (win) {
       _stopwatch.stop();
-      _saveBestTime(_stopwatch.elapsedMilliseconds); // Guardem el temps
+      _saveBestTime(_stopwatch.elapsedMilliseconds);
     }
 
     setState(() {
@@ -166,7 +166,8 @@ class _ParellesRecallState extends State<ParellesRecall> {
         String finalTime = _formatTimeWithUnits(_stopwatch.elapsed);
         _resultTitle = widget.language == 'cat' ? '🎉 Felicitats!' : widget.language == 'esp' ? '🎉 ¡Felicidades!' : '🎉 Congratulations!';
         String timeLabel = widget.language == 'cat' ? 'Temps' : widget.language == 'esp' ? 'Tiempo' : 'Time';
-        _resultMessage = '${widget.language == 'cat' ? 'Has completat el nivell!' : 'Level completed!'}\n$timeLabel: $finalTime';
+        _resultMessage = '${widget.language == 'cat' ? 'Has completat el nivell!' : widget.language == 'esp' ? '¡Has completado el nivel!'
+            : 'Level completed!'}\n$timeLabel: $finalTime';
       } else {
         _resultTitle = '❌ Error!';
         _resultMessage = '...';

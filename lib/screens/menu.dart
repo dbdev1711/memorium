@@ -3,8 +3,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:memo/styles/app_styles.dart';
 import '../models/game_config.dart';
 import 'operations_level.dart';
-import 'parelles_level.dart';
-import 'sequencia_level.dart';
+import 'pairs_level.dart';
+import 'sequence_level.dart';
 import 'number_level.dart';
 import 'alphabet_level.dart';
 import 'profile.dart';
@@ -41,10 +41,10 @@ class _MenuState extends State<Menu> {
 
     switch (mode) {
       case GameMode.classicMatch:
-        targetScreen = ParellesLevel(mode: mode, language: _currentLang);
+        targetScreen = PairsLevel(mode: mode, language: _currentLang);
         break;
       case GameMode.sequenceRecall:
-        targetScreen = SequenciaLevel(mode: mode, language: _currentLang);
+        targetScreen = SequenceLevel(mode: mode, language: _currentLang);
         break;
       case GameMode.numberRecall:
         targetScreen = NumberLevel(mode: mode, language: _currentLang);

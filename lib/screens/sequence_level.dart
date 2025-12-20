@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import '../models/game_config.dart';
 import '../styles/app_styles.dart';
-import 'sequencia_recall.dart';
+import 'sequence_recall.dart';
 
-class SequenciaLevel extends StatelessWidget {
+class SequenceLevel extends StatelessWidget {
   final GameMode mode;
   final String language;
 
-  const SequenciaLevel({Key? key, required this.mode, required this.language}) : super(key: key);
+  const SequenceLevel({Key? key, required this.mode, required this.language}) : super(key: key);
 
   List<GameConfig> _getConfigs() {
     return [
@@ -34,7 +34,7 @@ class SequenciaLevel extends StatelessWidget {
               padding: const EdgeInsets.all(20),
               child: ElevatedButton(
                 onPressed: () => Navigator.push(context, MaterialPageRoute(
-                  builder: (context) => SequenciaRecall(config: config, language: language))),
+                  builder: (context) => SequenceRecall(config: config, language: language))),
                 style: ElevatedButton.styleFrom(minimumSize: const Size(280, 60)),
                 child: Text(config.levelTitle, style: AppStyles.levelText),
               ),

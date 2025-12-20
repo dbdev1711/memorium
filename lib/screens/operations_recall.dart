@@ -70,25 +70,44 @@ class _OperationsRecallState extends State<OperationsRecall> {
       final random = Random();
 
       while (_operations.length < count) {
-        int n1 = random.nextInt(10) + 1;
-        int n2 = random.nextInt(10) + 1;
-        int res;
+        int n1, n2, res;
         String sym;
+        int opType = random.nextInt(4); // 0:+, 1:-, 2:*, 3:/
 
-        if (random.nextBool()) {
-          sym = '+';
-          res = n1 + n2;
-        }
-        else {
-          sym = '-';
-          if (n1 < n2) {
-            final temp = n1;
-            n1 = n2;
-            n2 = temp;
-          }
-          res = n1 - n2;
+        switch (opType) {
+          case 0: // Suma (números fins al 10)
+            n1 = random.nextInt(10) + 1;
+            n2 = random.nextInt(10) + 1;
+            sym = '+';
+            res = n1 + n2;
+            break;
+          case 1: // Resta (minuend fins al 10)
+            n1 = random.nextInt(10) + 1;
+            n2 = random.nextInt(n1) + 1;
+            sym = '-';
+            res = n1 - n2;
+            break;
+          case 2: // Multiplicació (factors fins al 10)
+            n1 = random.nextInt(10) + 1;
+            n2 = random.nextInt(10) + 1;
+            sym = '×';
+            res = n1 * n2;
+            break;
+          case 3: // Divisió (dividend i divisor fins al 10)
+            n1 = random.nextInt(10) + 1; // Dividend de l'1 al 10
+            List<int> divisors = [];
+            for (int i = 1; i <= n1; i++) {
+              if (n1 % i == 0) divisors.add(i);
+            }
+            n2 = divisors[random.nextInt(divisors.length)]; // Divisor exacte
+            sym = '÷';
+            res = n1 ~/ n2;
+            break;
+          default:
+            res = 0; sym = ''; n1 = 0; n2 = 0;
         }
 
+        // Evitem duplicar resultats per no confondre en l'ordenació
         if (!_operations.any((e) => e.result == res)) {
           _operations.add(OperationModel(expression: '$n1 $sym $n2', result: res));
         }
@@ -97,16 +116,9 @@ class _OperationsRecallState extends State<OperationsRecall> {
     });
   }
 
-  String _formatTimeWithUnits(Duration duration) {
-    int minutes = duration.inMinutes;
-    int seconds = duration.inSeconds.remainder(60);
-    return minutes > 0 ? '${minutes}m ${seconds}s' : '${seconds}s';
-  }
-
   Future<void> _saveBestTime(int timeInMillis) async {
     final prefs = await SharedPreferences.getInstance();
     int lastBest = prefs.getInt('time_operations') ?? 99999999;
-
     if (timeInMillis < lastBest) {
       await prefs.setInt('time_operations', timeInMillis);
     }
@@ -142,50 +154,59 @@ class _OperationsRecallState extends State<OperationsRecall> {
       _saveBestTime(_stopwatch.elapsedMilliseconds);
     }
 
+    final sec = _stopwatch.elapsed.inSeconds.remainder(60);
+    final min = _stopwatch.elapsed.inMinutes;
+
+    String timeLabel = widget.language == 'cat' ? 'Temps' : (widget.language == 'esp' ? 'Tiempo' : 'Time');
+    String timeStr = min > 0 ? "\n$timeLabel: ${min}m ${sec}s" : "\n$timeLabel: ${sec}s";
+
     setState(() {
       _isGameOver = true;
       _showResultPanel = true;
       _resultColor = win ? Colors.green : Colors.red;
 
       if (win) {
-        String finalTime = _formatTimeWithUnits(_stopwatch.elapsed);
-        _resultTitle = widget.language == 'cat' ? '🎉 Molt bé!' : '🎉 Well done!';
-        String timeLabel = widget.language == 'cat' ? 'Temps' : 'Time';
-        _resultMessage = '${widget.language == 'cat' ? 'Has ordenat correctament!' : 'Correctly sorted!'}\n$timeLabel: $finalTime';
-      }
-      else {
-        _resultTitle = widget.language == 'cat' ? '❌ Error' : '❌ Error';
-        _resultMessage = widget.language == 'cat' ? 'L\'ordre no és correcte.' : 'Incorrect order.';
+        _resultTitle = widget.language == 'cat' ? '🎉 Molt bé!' : (widget.language == 'esp' ? '🎉 ¡Muy bien!' : '🎉 Well done!');
+        _resultMessage = (widget.language == 'cat' ? 'Has ordenat correctament!' : (widget.language == 'esp' ? '¡Has ordenado correctamente!' : 'Correctly sorted!')) + timeStr;
+      } else {
+        _resultTitle = '❌ Error';
+        _resultMessage = widget.language == 'cat'
+            ? 'L\'ordre no és correcte.'
+            : (widget.language == 'esp' ? 'El orden no es correcto.' : 'Incorrect order.');
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    String instruction = widget.language == 'cat' ? 'Ordena de menor a major:' : 'Sort in ascending:';
+    String appBarTitle = widget.language == 'cat' ? 'Operacions' : (widget.language == 'esp' ? 'Operaciones' : 'Operations');
+    String instruction = widget.language == 'cat'
+        ? 'Ordena de menor a major:'
+        : (widget.language == 'esp' ? 'Ordena de menor a mayor:' : 'Sort in ascending:');
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.language == 'cat' ? 'Operacions' : 'Operations', style: AppStyles.appBarText),
+        title: Text(appBarTitle, style: AppStyles.appBarText),
         centerTitle: true,
         actions: [IconButton(icon: const Icon(Icons.refresh), onPressed: _initializeGame)],
       ),
       body: Column(
         children: [
-          AppStyles.sizedBoxHeight20,
           Container(
             padding: const EdgeInsets.all(20.0),
             width: double.infinity,
             color: Colors.blue.shade50,
-            child: Text(instruction, style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.blue.shade800), textAlign: TextAlign.center),
+            child: Text(instruction, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.blueGrey), textAlign: TextAlign.center),
           ),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.all(20.0),
+              padding: const EdgeInsets.all(16.0), // Padding al grid de les cards
               child: GridView.builder(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: _operations.length <= 2 ? 1 : 2,
-                  mainAxisSpacing: 15, crossAxisSpacing: 15,
-                  childAspectRatio: _operations.length <= 2 ? 2.5 : 1.8,
+                  mainAxisSpacing: 12,
+                  crossAxisSpacing: 12,
+                  childAspectRatio: _operations.length <= 2 ? 2.8 : 1.8,
                 ),
                 itemCount: _operations.length,
                 itemBuilder: (context, index) {
@@ -195,11 +216,20 @@ class _OperationsRecallState extends State<OperationsRecall> {
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 200),
                       decoration: BoxDecoration(
-                        color: op.isSelected ? Colors.blue.withValues(alpha: 0.1) : Colors.white,
+                        color: op.isSelected ? Colors.blue.withOpacity(0.1) : Colors.white,
                         borderRadius: BorderRadius.circular(15),
                         border: Border.all(color: op.isSelected ? Colors.blue : Colors.grey.shade300, width: 3),
                       ),
-                      child: Center(child: Text(op.expression, style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: op.isSelected ? Colors.blue : Colors.black87))),
+                      child: Center(
+                        child: Text(
+                          op.expression,
+                          style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            color: op.isSelected ? Colors.blue : Colors.black87
+                          )
+                        )
+                      ),
                     ),
                   );
                 },
