@@ -14,12 +14,13 @@ class _ProfileState extends State<Profile> {
   final TextEditingController _nomController = TextEditingController();
   String _selectedLanguage = 'cat';
 
-  Map<String, dynamic> _results = {
-    'alphabet': '',
-    'number': '',
-    'operations': '',
-    'parelles': '',
-    'sequencia': '',
+  // Estructura per guardar els 3 nivells de cada joc
+  Map<String, Map<String, String>> _results = {
+    'alphabet': {'Facil': '-', 'Mitja': '-', 'Dificil': '-'},
+    'number': {'Facil': '-', 'Mitja': '-', 'Dificil': '-'},
+    'operations': {'Facil': '-', 'Mitja': '-', 'Dificil': '-'},
+    'parelles': {'Facil': '-', 'Mitja': '-', 'Dificil': '-'},
+    'sequencia': {'Facil': '-', 'Mitja': '-', 'Dificil': '-'},
   };
 
   @override
@@ -34,18 +35,27 @@ class _ProfileState extends State<Profile> {
       _selectedLanguage = prefs.getString('language') ?? 'cat';
       _nomController.text = prefs.getString('user_name') ?? '';
 
-      _results['alphabet'] = _getTime(prefs, 'time_alphabet');
-      _results['number'] = _getTime(prefs, 'time_number');
-      _results['operations'] = _getTime(prefs, 'time_operations');
-      _results['parelles'] = _getTime(prefs, 'time_parelles');
-      _results['sequencia'] = _getTime(prefs, 'time_sequencia');
+      // Carreguem les dades per a cada joc i cada nivell
+      _results['alphabet'] = _getAllLevels(prefs, 'time_alphabet');
+      _results['number'] = _getAllLevels(prefs, 'time_number');
+      _results['operations'] = _getAllLevels(prefs, 'time_operations');
+      _results['parelles'] = _getAllLevels(prefs, 'time_parelles');
+      _results['sequencia'] = _getAllLevels(prefs, 'time_sequencia');
     });
   }
 
-  dynamic _getTime(SharedPreferences prefs, String key) {
-    int? time = prefs.getInt(key);
-    if (time == null) return '';
-    Duration d = Duration(milliseconds: time);
+  // Funció auxiliar per obtenir els 3 temps d'un prefix
+  Map<String, String> _getAllLevels(SharedPreferences prefs, String prefix) {
+    return {
+      'Facil': _formatMs(prefs.getInt('${prefix}_Facil')),
+      'Mitja': _formatMs(prefs.getInt('${prefix}_Mitja')),
+      'Dificil': _formatMs(prefs.getInt('${prefix}_Dificil')),
+    };
+  }
+
+  String _formatMs(int? ms) {
+    if (ms == null) return '-';
+    Duration d = Duration(milliseconds: ms);
     int m = d.inMinutes;
     int s = d.inSeconds.remainder(60);
     return m > 0 ? '${m}m ${s}s' : '${s}s';
@@ -56,43 +66,93 @@ class _ProfileState extends State<Profile> {
     await prefs.setString('language', _selectedLanguage);
     await prefs.setString('user_name', _nomController.text);
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor:
-    Colors.lightBlue, shape: RoundedRectangleBorder(borderRadius:
-    BorderRadius.circular(10)), content: Text(_selectedLanguage == 'cat' ? 'Guardat!' : _selectedLanguage == 'esp' ? '¡Guardado!' : 'Saved!', style:
-    AppStyles.profileSnackBar)));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        backgroundColor: Colors.lightBlue,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        content: Text(
+            _selectedLanguage == 'cat' ? 'Guardat!' : _selectedLanguage == 'esp' ? '¡Guardado!' : 'Saved!',
+            style: AppStyles.profileSnackBar)));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(_selectedLanguage == 'cat' ? 'Perfil' :
-      _selectedLanguage == 'esp' ? 'Perfil' : 'Profile', style: AppStyles
-          .appBarText), centerTitle: true),
+      appBar: AppBar(
+          title: Text(
+              _selectedLanguage == 'cat' ? 'Perfil' : _selectedLanguage == 'esp' ? 'Perfil' : 'Profile',
+              style: AppStyles.appBarText),
+          centerTitle: true),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(15),
         child: Column(
           children: [
             _buildSettingsCard(),
-            AppStyles.sizedBoxHeight50,
-            Text(_selectedLanguage == 'cat' ? 'Millors Temps' : _selectedLanguage == 'esp' ? 'Mejores Tiempos' : 'Best Times',
+            AppStyles.sizedBoxHeight40,
+            Text(
+                _selectedLanguage == 'cat' ? 'Millors Temps' : _selectedLanguage == 'esp' ? 'Mejores Tiempos' : 'Best Times',
                 style: AppStyles.resultsProfile),
-            const Divider(color: Colors.black26, thickness: 1),
-            AppStyles.sizedBoxHeight10,
-            _buildResultTile(_selectedLanguage == 'cat' ? 'Alfabètic' : _selectedLanguage == 'esp' ? 'Alfabético' : 'Alphabetic', _results['alphabet'], Icons.abc_rounded),
-            _buildResultTile(_selectedLanguage == 'cat' ? 'Numèric' : _selectedLanguage == 'esp' ? 'Numérico' : 'Numbers', _results['number'], Icons.onetwothree_rounded),
-            _buildResultTile(_selectedLanguage == 'cat' ? 'Operacions' : _selectedLanguage == 'esp' ? 'Operaciones' : 'Operations', _results['operations'], Icons.calculate_rounded),
-            _buildResultTile(_selectedLanguage == 'cat' ? 'Parelles' : _selectedLanguage == 'esp' ? 'Parejas' : 'Pairs', _results['parelles'], Icons.grid_view_rounded),
-            _buildResultTile(_selectedLanguage == 'cat' ? 'Seqüència' :
-            _selectedLanguage == 'esp' ? 'Secuencias' : 'Sequence', _results['sequencia'], Icons.route_rounded),
+            AppStyles.sizedBoxHeight20,
+
+            // CAPÇALERA DE LA TAULA
+            _buildTableHeader(),
+            const Divider(),
+
+            // FILES DE RESULTATS
+            _buildGameRow(_selectedLanguage == 'cat' ? 'Alfabètic' : 'Alfabético', _results['alphabet']!, Icons.abc_rounded),
+            _buildGameRow(_selectedLanguage == 'cat' ? 'Numèric' : 'Numérico', _results['number']!, Icons.onetwothree_rounded),
+            _buildGameRow(_selectedLanguage == 'cat' ? 'Operacions' : 'Operaciones', _results['operations']!, Icons.calculate_rounded),
+            _buildGameRow(_selectedLanguage == 'cat' ? 'Parelles' : 'Parejas', _results['parelles']!, Icons.grid_view_rounded),
+            _buildGameRow(_selectedLanguage == 'cat' ? 'Seqüència' : 'Secuencia', _results['sequencia']!, Icons.route_rounded),
           ],
         ),
       ),
     );
   }
 
+  Widget _buildTableHeader() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+      child: Row(
+        children: [
+          Expanded(flex: 3, child: Text(_selectedLanguage == 'cat' ? 'Joc' : 'Juego', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 17))),
+          Expanded(flex: 2, child: Text(_selectedLanguage == 'cat' ? 'Fàcil' : 'Fácil', textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green, fontSize: 17))),
+          Expanded(flex: 2, child: Text(_selectedLanguage == 'cat' ? 'Mitjà' : 'Medio', textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.orange, fontSize: 17))),
+          Expanded(flex: 2, child: Text(_selectedLanguage == 'cat' ? 'Difícil' : 'Difícil', textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.red, fontSize: 17))),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGameRow(String name, Map<String, String> levels, IconData icon) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 4.0),
+      decoration: const BoxDecoration(
+        border: Border(bottom: BorderSide(color: Colors.black12, width: 0.5)),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 3,
+            child: Row(
+              children: [
+                Icon(icon, size: 20, color: Colors.blueGrey),
+                const SizedBox(width: 8),
+                Expanded(child: Text(name, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500))),
+              ],
+            ),
+          ),
+          Expanded(flex: 2, child: Text(levels['Facil']!, textAlign: TextAlign.center, style: const TextStyle(fontSize: 15))),
+          Expanded(flex: 2, child: Text(levels['Mitja']!, textAlign: TextAlign.center, style: const TextStyle(fontSize: 15))),
+          Expanded(flex: 2, child: Text(levels['Dificil']!, textAlign: TextAlign.center, style: const TextStyle(fontSize: 15))),
+        ],
+      ),
+    );
+  }
+
   Widget _buildSettingsCard() {
     return Card(
-      elevation: 4, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -100,57 +160,32 @@ class _ProfileState extends State<Profile> {
             TextField(
               controller: _nomController,
               textCapitalization: TextCapitalization.words,
-              cursorColor: Colors.black,
               decoration: InputDecoration(
-                labelText: _selectedLanguage == 'cat'
-                    ? 'Nom'
-                    : _selectedLanguage == 'esp'
-                        ? 'Nombre'
-                        : 'Name',
+                labelText: _selectedLanguage == 'cat' ? 'Nom' : _selectedLanguage == 'esp' ? 'Nombre' : 'Name',
                 prefixIcon: const Icon(Icons.edit),
-                focusedBorder: const UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey, width: 2),
-                ),
-                enabledBorder: const UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey),
-                ),
-                floatingLabelStyle: const TextStyle(color: Colors.black),
               ),
             ),
             AppStyles.sizedBoxHeight20,
             DropdownButtonFormField<String>(
-              initialValue: _selectedLanguage,
-              decoration: InputDecoration(labelText: _selectedLanguage == 'cat' ? 'Idioma' : _selectedLanguage == 'esp' ? 'Idioma' : 'Language', labelStyle: TextStyle(color: Colors.black),
-                prefixIcon: const Icon(Icons
-                  .language),
-                  focusedBorder: const UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey, width: 2),
-                  ),
-                  enabledBorder: const UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey),
-                  ),),
-              items: const [DropdownMenuItem(value: 'cat', child: Text('Català')), DropdownMenuItem(value: 'esp', child: Text('Español')), DropdownMenuItem(value: 'eng', child: Text('English'))],
+              value: _selectedLanguage,
+              decoration: InputDecoration(
+                labelText: _selectedLanguage == 'cat' ? 'Idioma' : _selectedLanguage == 'esp' ? 'Idioma' : 'Language',
+                prefixIcon: const Icon(Icons.language),
+              ),
+              items: const [
+                DropdownMenuItem(value: 'cat', child: Text('Català')),
+                DropdownMenuItem(value: 'esp', child: Text('Español')),
+                DropdownMenuItem(value: 'eng', child: Text('English'))
+              ],
               onChanged: (val) => setState(() => _selectedLanguage = val!),
             ),
             AppStyles.sizedBoxHeight20,
-            ElevatedButton(onPressed: _saveSettings, style: ElevatedButton.styleFrom(backgroundColor: Colors.black, foregroundColor: Colors.white), child: Text(_selectedLanguage == 'cat' ? 'Guardar' : _selectedLanguage == 'esp' ? 'Guardar' : 'Save')),
+            ElevatedButton(
+              onPressed: _saveSettings,
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.black, foregroundColor: Colors.white),
+              child: Text(_selectedLanguage == 'cat' ? 'Guardar' : _selectedLanguage == 'esp' ? 'Guardar' : 'Save'),
+            ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildResultTile(String name, dynamic score, IconData icon) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
-      child: ListTile(
-        leading: Icon(icon, color: Colors.black87, size: 35),
-        title: Text(name, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
-        trailing: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          decoration: BoxDecoration(color: Colors.blueAccent.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(20)),
-          child: Text('$score', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blueAccent)),
         ),
       ),
     );

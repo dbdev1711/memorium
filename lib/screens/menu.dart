@@ -64,8 +64,6 @@ class _MenuState extends State<Menu> {
       context,
       MaterialPageRoute(builder: (context) => targetScreen),
     ).then((_) {
-      // Quan l'usuari torna al menú (per exemple des de Perfil),
-      // recarreguem l'idioma per si s'ha canviat.
       _loadSettings();
     });
   }
@@ -83,14 +81,14 @@ class _MenuState extends State<Menu> {
         centerTitle: true,
       ),
       body: SizedBox(
-        width: double.infinity, // Ocupa tot l'ample per centrar els fills
+        width: double.infinity,
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center, // Centra els botons
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const SizedBox(height: 30),
+              AppStyles.sizedBoxHeight40,
               ...GameMode.values.map((mode) {
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10.0),

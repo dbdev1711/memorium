@@ -101,52 +101,82 @@ class _SequenceRecallState extends State<SequenceRecall> {
   }
 
   Future<void> _saveAndShow(bool win) async {
-  String timeStr = "";
-  if (win) {
-    final ms = _stopwatch.elapsedMilliseconds;
-    final prefs = await SharedPreferences.getInstance();
-    if (ms < (prefs.getInt('time_sequencia') ?? 99999999)) {
-      await prefs.setInt('time_sequencia', ms);
+    String timeStr = "";
+    if (win) {
+      final ms = _stopwatch.elapsedMilliseconds;
+      final prefs = await SharedPreferences.getInstance();
+
+      // DETERMINACIÓ DEL NIVELL
+      String levelKey;
+      if (widget.config.columns <= 3) {
+        levelKey = "Facil";
+      } else if (widget.config.columns <= 4) {
+        levelKey = "Mitja";
+      } else {
+        levelKey = "Dificil";
+      }
+
+      String storageKey = 'time_sequencia_$levelKey';
+      int lastBest = prefs.getInt(storageKey) ?? 99999999;
+
+      if (ms < lastBest) {
+        await prefs.setInt(storageKey, ms);
+        print("Nova millor marca en $levelKey (Seqüència): $ms ms");
+      }
+
+      final sec = _stopwatch.elapsed.inSeconds.remainder(60);
+      final min = _stopwatch.elapsed.inMinutes;
+
+      String timeLabel = widget.language == 'cat' ? 'Temps' : (widget.language == 'esp' ? 'Tiempo' : 'Time');
+      timeStr = min > 0 ? "\n$timeLabel: ${min}m ${sec}s" : "\n$timeLabel: ${sec}s";
     }
 
-    final sec = _stopwatch.elapsed.inSeconds.remainder(60);
-    final min = _stopwatch.elapsed.inMinutes;
+    setState(() {
+      _isChecking = true;
+      _showResultPanel = true;
+      _resultColor = win ? Colors.green : Colors.red;
 
-    // Traducció de l'etiqueta de temps
-    String timeLabel = widget.language == 'cat'
-        ? 'Temps'
-        : (widget.language == 'esp' ? 'Tiempo' : 'Time');
+      _resultTitle = win
+          ? (widget.language == 'cat' ? '🏆 Correcte!' : widget.language == 'esp' ? '🏆 ¡Correcto!' : '🏆 Correct!')
+          : '❌ Error!';
 
-    // Format del text final
-    timeStr = min > 0
-        ? "\n$timeLabel: ${min}m ${sec}s"
-        : "\n$timeLabel: ${sec}s";
+      _resultMessage = (win
+          ? (widget.language == 'cat' ? 'Seqüència completada!' : widget.language == 'esp' ? '¡Secuencia completada!' : 'Sequence completed!')
+          : (widget.language == 'cat' ? 'Ho pots fer millor!' : widget.language == 'esp' ? '¡Puedes hacerlo mejor!' : 'You can do it better!'))
+          + timeStr;
+    });
   }
-
-  setState(() {
-    _isChecking = true;
-    _showResultPanel = true;
-    _resultColor = win ? Colors.green : Colors.red;
-
-    _resultTitle = win
-        ? (widget.language == 'cat' ? '🏆 Correcte!' : widget.language == 'esp' ? '🏆 ¡Correcto!' : '🏆 Correct!')
-        : '❌ Error!';
-
-    _resultMessage = (win
-        ? (widget.language == 'cat' ? 'Seqüència completada!' : widget.language == 'esp' ? '¡Secuencia completada!' : 'Sequence completed!')
-        : (widget.language == 'cat' ? 'Ho pots fer millor!' : widget.language == 'esp' ? 'Puedes hacerlo mejor!' : 'You can do it better!'))
-        + timeStr;
-  });
-}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.language == 'cat' ? 'Seqüència' : widget.language == 'esp' ? 'Secuencia' : 'Sequence', style: AppStyles
-          .appBarText), actions: [IconButton(icon: const Icon(Icons.refresh), onPressed: _initializeGame)]),
+      appBar: AppBar(
+        title: Text(widget.language == 'cat' ? 'Seqüència' : widget.language == 'esp' ? 'Secuencia' : 'Sequence', style: AppStyles.appBarText),
+        actions: [IconButton(icon: const Icon(Icons.refresh), onPressed: _initializeGame)],
+      ),
       body: Column(children: [
-          Padding(padding: const EdgeInsets.all(16.0), child: _isChecking ? AppStyles.sizedBoxHeight70 : Column(children: [Text(widget.language == 'cat' ? 'Repeteix la seqüència' : widget.language == 'esp' ? 'Repite la secuencia' : 'Repeat the sequence', style: const TextStyle(fontSize: 18)), Text('${widget.language == 'cat' ? 'Pas' : widget.language == 'esp' ? 'Paso' : 'Step'}: $_sequenceStep / ${_sequence.length}', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold))])),
-        Expanded(child: Padding(padding: const EdgeInsets.all(8.0), child: IgnorePointer(ignoring: _isChecking, child: GridView.builder(gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: widget.config.columns, crossAxisSpacing: 10, mainAxisSpacing: 10), itemCount: _cards.length, itemBuilder: (context, i) => CardWidget(key: ValueKey(_cards[i].id), card: _cards[i], onTap: () => _handleCardTap(_cards[i])))))),
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: _isChecking
+              ? AppStyles.sizedBoxHeight70
+              : Column(children: [
+                  Text(widget.language == 'cat' ? 'Repeteix la seqüència' : widget.language == 'esp' ? 'Repite la secuencia' : 'Repeat the sequence', style: const TextStyle(fontSize: 18)),
+                  Text('${widget.language == 'cat' ? 'Pas' : widget.language == 'esp' ? 'Paso' : 'Step'}: $_sequenceStep / ${_sequence.length}', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold))
+                ])
+        ),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: IgnorePointer(
+              ignoring: _isChecking,
+              child: GridView.builder(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: widget.config.columns, crossAxisSpacing: 10, mainAxisSpacing: 10),
+                itemCount: _cards.length,
+                itemBuilder: (context, i) => CardWidget(key: ValueKey(_cards[i].id), card: _cards[i], onTap: () => _handleCardTap(_cards[i])),
+              ),
+            ),
+          ),
+        ),
         if (_showResultPanel) ResultPanel(title: _resultTitle, message: _resultMessage, color: _resultColor, onRestart: _initializeGame, language: widget.language),
       ]),
     );

@@ -62,7 +62,25 @@ class _NumberRecallState extends State<NumberRecall> {
     if (win) {
       final ms = _stopwatch.elapsedMilliseconds;
       final prefs = await SharedPreferences.getInstance();
-      if (ms < (prefs.getInt('time_number') ?? 99999999)) await prefs.setInt('time_number', ms);
+
+      // DETERMINEM EL NIVELL (Igual que a AlphabetRecall)
+      String levelKey;
+      if (widget.config.rows <= 3) {
+        levelKey = "Facil";
+      } else if (widget.config.rows <= 4) {
+        levelKey = "Mitja";
+      } else {
+        levelKey = "Dificil";
+      }
+
+      // CLAU DINÀMICA: time_number_Facil, time_number_Mitja, etc.
+      String storageKey = 'time_number_$levelKey';
+
+      int? currentBest = prefs.getInt(storageKey);
+      if (currentBest == null || ms < currentBest) {
+        await prefs.setInt(storageKey, ms);
+        print("Nova millor marca en $levelKey (Numèric): $ms ms");
+      }
 
       final sec = _stopwatch.elapsed.inSeconds.remainder(60);
       final min = _stopwatch.elapsed.inMinutes;
@@ -100,7 +118,6 @@ class _NumberRecallState extends State<NumberRecall> {
       body: Column(
         children: [
           AppStyles.sizedBoxHeight20,
-          // Aquest bloc desapareix quan _showResultPanel és true
           if (!_showResultPanel)
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 20),

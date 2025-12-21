@@ -75,31 +75,31 @@ class _OperationsRecallState extends State<OperationsRecall> {
         int opType = random.nextInt(4); // 0:+, 1:-, 2:*, 3:/
 
         switch (opType) {
-          case 0: // Suma (números fins al 10)
+          case 0: // Suma
             n1 = random.nextInt(10) + 1;
             n2 = random.nextInt(10) + 1;
             sym = '+';
             res = n1 + n2;
             break;
-          case 1: // Resta (minuend fins al 10)
+          case 1: // Resta
             n1 = random.nextInt(10) + 1;
             n2 = random.nextInt(n1) + 1;
             sym = '-';
             res = n1 - n2;
             break;
-          case 2: // Multiplicació (factors fins al 10)
+          case 2: // Multiplicació
             n1 = random.nextInt(10) + 1;
             n2 = random.nextInt(10) + 1;
             sym = '×';
             res = n1 * n2;
             break;
-          case 3: // Divisió (dividend i divisor fins al 10)
-            n1 = random.nextInt(10) + 1; // Dividend de l'1 al 10
+          case 3: // Divisió
+            n1 = random.nextInt(10) + 1;
             List<int> divisors = [];
             for (int i = 1; i <= n1; i++) {
               if (n1 % i == 0) divisors.add(i);
             }
-            n2 = divisors[random.nextInt(divisors.length)]; // Divisor exacte
+            n2 = divisors[random.nextInt(divisors.length)];
             sym = '÷';
             res = n1 ~/ n2;
             break;
@@ -107,7 +107,6 @@ class _OperationsRecallState extends State<OperationsRecall> {
             res = 0; sym = ''; n1 = 0; n2 = 0;
         }
 
-        // Evitem duplicar resultats per no confondre en l'ordenació
         if (!_operations.any((e) => e.result == res)) {
           _operations.add(OperationModel(expression: '$n1 $sym $n2', result: res));
         }
@@ -116,11 +115,25 @@ class _OperationsRecallState extends State<OperationsRecall> {
     });
   }
 
-  Future<void> _saveBestTime(int timeInMillis) async {
+  // MÈTODE CORREGIT PER GUARDAR PER NIVELLS
+  Future<void> _saveStats(int timeInMillis) async {
     final prefs = await SharedPreferences.getInstance();
-    int lastBest = prefs.getInt('time_operations') ?? 99999999;
+
+    String levelKey;
+    if (widget.config.rows <= 2) {
+      levelKey = "Facil";
+    } else if (widget.config.rows <= 4) {
+      levelKey = "Mitja";
+    } else {
+      levelKey = "Dificil";
+    }
+
+    String storageKey = 'time_operations_$levelKey';
+    int lastBest = prefs.getInt(storageKey) ?? 99999999;
+
     if (timeInMillis < lastBest) {
-      await prefs.setInt('time_operations', timeInMillis);
+      await prefs.setInt(storageKey, timeInMillis);
+      print("Nova millor marca en $levelKey (Operacions): $timeInMillis ms");
     }
   }
 
@@ -151,7 +164,9 @@ class _OperationsRecallState extends State<OperationsRecall> {
 
     if (win) {
       _stopwatch.stop();
-      _saveBestTime(_stopwatch.elapsedMilliseconds);
+      _saveStats(_stopwatch.elapsedMilliseconds); // Guardem el temps per nivell
+    } else {
+      _stopwatch.stop();
     }
 
     final sec = _stopwatch.elapsed.inSeconds.remainder(60);
@@ -200,7 +215,7 @@ class _OperationsRecallState extends State<OperationsRecall> {
           ),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.all(16.0), // Padding al grid de les cards
+              padding: const EdgeInsets.all(16.0),
               child: GridView.builder(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: _operations.length <= 2 ? 1 : 2,

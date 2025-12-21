@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
+import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/card_item.dart';
 import '../models/game_config.dart';
@@ -94,16 +95,32 @@ class _AlphabetRecallState extends State<AlphabetRecall> {
     if (win) {
       final ms = _stopwatch.elapsedMilliseconds;
       final prefs = await SharedPreferences.getInstance();
-      if (ms < (prefs.getInt('time_alphabet') ?? 99999999)) {
-        await prefs.setInt('time_alphabet', ms);
+
+      // DETERMINEM EL NIVELL SEGONS LES FILES (Igual que fas per al temps de memòria)
+      String levelKey;
+      if (widget.config.rows <= 3) {
+        levelKey = "Facil";
+      } else if (widget.config.rows <= 4) {
+        levelKey = "Mitja";
+      } else {
+        levelKey = "Dificil";
+      }
+
+      // CLAU DINÀMICA: time_alphabet_Facil, time_alphabet_Mitja, etc.
+      String storageKey = 'time_alphabet_$levelKey';
+
+      int? currentBest = prefs.getInt(storageKey);
+      if (currentBest == null || ms < currentBest) {
+        await prefs.setInt(storageKey, ms);
+        print("Nova millor marca en $levelKey: $ms ms");
       }
 
       int totalSeconds = _stopwatch.elapsed.inSeconds;
-      int min = totalSeconds ~/ 60;
-      int sec = totalSeconds % 60;
+      int minTime = totalSeconds ~/ 60;
+      int secTime = totalSeconds % 60;
 
       String label = widget.language == 'cat' ? 'Temps' : (widget.language == 'esp' ? 'Tiempo' : 'Time');
-      timeStr = min > 0 ? "\n$label: ${min}m ${sec}s" : "\n$label: ${sec}s";
+      timeStr = minTime > 0 ? "\n$label: ${minTime}m ${secTime}s" : "\n$label: ${secTime}s";
     }
 
     setState(() {
@@ -140,7 +157,6 @@ class _AlphabetRecallState extends State<AlphabetRecall> {
       body: Column(
         children: [
           AppStyles.sizedBoxHeight20,
-          // Les instruccions desapareixen en mostrar el resultat
           if (!_showResultPanel)
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 20.0),

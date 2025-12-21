@@ -86,14 +86,26 @@ class _PairsRecallState extends State<PairsRecall> {
     });
   }
 
-  // Funció per guardar el millor temps de manera persistent
-  Future<void> _saveBestTime(int timeInMillis) async {
+  // MODIFICAT: Funció per guardar el temps segons el nivell
+  Future<void> _saveStats(int timeInMillis) async {
     final prefs = await SharedPreferences.getInstance();
-    // Usems un valor molt alt per defecte si no hi ha dades
-    int lastBest = prefs.getInt('time_parelles') ?? 99999999;
+
+    // Determinació del nivell basada en les files
+    String levelKey;
+    if (widget.config.rows <= 3) {
+      levelKey = "Facil";
+    } else if (widget.config.rows <= 4) {
+      levelKey = "Mitja";
+    } else {
+      levelKey = "Dificil";
+    }
+
+    String storageKey = 'time_parelles_$levelKey';
+    int lastBest = prefs.getInt(storageKey) ?? 99999999;
 
     if (timeInMillis < lastBest) {
-      await prefs.setInt('time_parelles', timeInMillis);
+      await prefs.setInt(storageKey, timeInMillis);
+      print("Nova millor marca en $levelKey (Parelles): $timeInMillis ms");
     }
   }
 
@@ -155,7 +167,7 @@ class _PairsRecallState extends State<PairsRecall> {
   void _showGamePanel({required bool win}) {
     if (win) {
       _stopwatch.stop();
-      _saveBestTime(_stopwatch.elapsedMilliseconds);
+      _saveStats(_stopwatch.elapsedMilliseconds); // Crida a la nova funció de guardat
     }
 
     setState(() {
