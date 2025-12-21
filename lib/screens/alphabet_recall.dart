@@ -30,8 +30,6 @@ class _AlphabetRecallState extends State<AlphabetRecall> {
   String _resultMessage = '';
   Color _resultColor = Colors.green;
   final Stopwatch _stopwatch = Stopwatch();
-
-  // Variables per a l'anunci
   InterstitialAd? _interstitialAd;
   bool _isAdLoaded = false;
 
@@ -39,12 +37,12 @@ class _AlphabetRecallState extends State<AlphabetRecall> {
   void initState() {
     super.initState();
     _initializeGame();
-    _loadAd(); // Carreguem l'anunci al principi
+    _loadAd();
   }
 
   @override
   void dispose() {
-    _interstitialAd?.dispose(); // Alliberem memòria
+    _interstitialAd?.dispose();
     super.dispose();
   }
 
@@ -57,7 +55,7 @@ class _AlphabetRecallState extends State<AlphabetRecall> {
           ad.fullScreenContentCallback = FullScreenContentCallback(
             onAdDismissedFullScreenContent: (ad) {
               ad.dispose();
-              _loadAd(); // Pre-carreguem el següent
+              _loadAd();
             },
             onAdFailedToShowFullScreenContent: (ad, error) {
               ad.dispose();
@@ -154,7 +152,6 @@ class _AlphabetRecallState extends State<AlphabetRecall> {
       timeStr = minTime > 0 ? "\n$label: ${minTime}m ${secTime}s" : "\n$label: ${secTime}s";
     }
 
-    // Funció per mostrar els resultats
     void showResultUI() {
       setState(() {
         _gameState = 2;
@@ -172,7 +169,6 @@ class _AlphabetRecallState extends State<AlphabetRecall> {
       });
     }
 
-    // LLÒGICA DE L'ANUNCI: Es mostra abans del panell
     if (_isAdLoaded && _interstitialAd != null) {
       _interstitialAd!.show().then((_) {
         showResultUI();

@@ -35,7 +35,6 @@ class _PairsRecallState extends State<PairsRecall> {
   String _resultMessage = '';
   bool _isChecking = false;
 
-  // Variables per a l'anunci
   InterstitialAd? _interstitialAd;
   bool _isAdLoaded = false;
 
@@ -53,17 +52,16 @@ class _PairsRecallState extends State<PairsRecall> {
   void initState() {
     super.initState();
     _initializeGame();
-    _loadAd(); // Carreguem l'anunci en segon pla només entrar
+    _loadAd();
   }
 
   @override
   void dispose() {
     _stopwatch.stop();
-    _interstitialAd?.dispose(); // Alliberem la memòria de l'anunci
+    _interstitialAd?.dispose();
     super.dispose();
   }
 
-  // Funció per carregar l'Interstitial
   void _loadAd() {
     InterstitialAd.load(
       adUnitId: AdHelper.getInterstitialAdId('parelles'),
@@ -73,7 +71,7 @@ class _PairsRecallState extends State<PairsRecall> {
           ad.fullScreenContentCallback = FullScreenContentCallback(
             onAdDismissedFullScreenContent: (ad) {
               ad.dispose();
-              _loadAd(); // Pre-carreguem el següent per si tornen a jugar
+              _loadAd();
             },
             onAdFailedToShowFullScreenContent: (ad, error) {
               ad.dispose();
@@ -190,7 +188,6 @@ class _PairsRecallState extends State<PairsRecall> {
       _saveStats(_stopwatch.elapsedMilliseconds);
     }
 
-    // Aquesta funció mostra la UI final
     void displayResult() {
       setState(() {
         _showResultPanel = true;
@@ -208,15 +205,13 @@ class _PairsRecallState extends State<PairsRecall> {
         }
       });
     }
-
-    // LLÒGICA DE L'ANUNCI: Es mostra abans del panell de resultats
     if (_isAdLoaded && _interstitialAd != null) {
       _interstitialAd!.show().then((_) {
         displayResult();
         _isAdLoaded = false;
       });
     } else {
-      displayResult(); // Si no s'ha carregat, mostrem directament el resultat
+      displayResult();
     }
   }
 

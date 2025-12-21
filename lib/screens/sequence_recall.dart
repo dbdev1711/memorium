@@ -30,8 +30,6 @@ class _SequenceRecallState extends State<SequenceRecall> {
   String _resultMessage = '';
   Color _resultColor = Colors.green;
   final Stopwatch _stopwatch = Stopwatch();
-
-  // Variables per a l'anunci
   InterstitialAd? _interstitialAd;
   bool _isAdLoaded = false;
 
@@ -39,17 +37,16 @@ class _SequenceRecallState extends State<SequenceRecall> {
   void initState() {
     super.initState();
     _initializeGame();
-    _loadAd(); // Carreguem l'anunci al principi
+    _loadAd();
   }
 
   @override
   void dispose() {
     _stopwatch.stop();
-    _interstitialAd?.dispose(); // Alliberem memòria de l'anunci
+    _interstitialAd?.dispose();
     super.dispose();
   }
 
-  // Carreguem l'Interstitial per al joc de Seqüència
   void _loadAd() {
     InterstitialAd.load(
       adUnitId: AdHelper.getInterstitialAdId('sequence'),
@@ -59,7 +56,7 @@ class _SequenceRecallState extends State<SequenceRecall> {
           ad.fullScreenContentCallback = FullScreenContentCallback(
             onAdDismissedFullScreenContent: (ad) {
               ad.dispose();
-              _loadAd(); // Pre-carreguem el següent
+              _loadAd();
             },
             onAdFailedToShowFullScreenContent: (ad, error) {
               ad.dispose();
@@ -165,7 +162,6 @@ class _SequenceRecallState extends State<SequenceRecall> {
       timeStr = min > 0 ? "\n$timeLabel: ${min}m ${sec}s" : "\n$timeLabel: ${sec}s";
     }
 
-    // Funció per mostrar el panell de resultats
     void displayResultUI() {
       setState(() {
         _isChecking = true;
@@ -183,7 +179,6 @@ class _SequenceRecallState extends State<SequenceRecall> {
       });
     }
 
-    // MOSTRAR ANUNCI ABANS DEL PANELL
     if (_isAdLoaded && _interstitialAd != null) {
       _interstitialAd!.show().then((_) {
         displayResultUI();

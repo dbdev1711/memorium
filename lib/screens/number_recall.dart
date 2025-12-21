@@ -28,7 +28,6 @@ class _NumberRecallState extends State<NumberRecall> {
   Color _resultColor = Colors.green;
   final Stopwatch _stopwatch = Stopwatch();
 
-  // Variables per a l'anunci
   InterstitialAd? _interstitialAd;
   bool _isAdLoaded = false;
 
@@ -36,17 +35,16 @@ class _NumberRecallState extends State<NumberRecall> {
   void initState() {
     super.initState();
     _initializeGame();
-    _loadAd(); // Pre-carreguem l'anunci de Números
+    _loadAd();
   }
 
   @override
   void dispose() {
     _stopwatch.stop();
-    _interstitialAd?.dispose(); // Alliberem memòria de l'anunci
+    _interstitialAd?.dispose();
     super.dispose();
   }
 
-  // Funció per carregar l'Interstitial de Números
   void _loadAd() {
     InterstitialAd.load(
       adUnitId: AdHelper.getInterstitialAdId('number'),
@@ -141,7 +139,6 @@ class _NumberRecallState extends State<NumberRecall> {
       timeStr = min > 0 ? "\n$timeLabel: ${min}m ${sec}s" : "\n$timeLabel: ${sec}s";
     }
 
-    // Funció per mostrar els resultats
     void showResultUI() {
       setState(() {
         _gameState = 2;

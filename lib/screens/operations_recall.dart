@@ -43,8 +43,6 @@ class _OperationsRecallState extends State<OperationsRecall> {
   String _resultMessage = '';
   Color _resultColor = Colors.green;
   bool _isGameOver = false;
-
-  // Variables per a l'anunci
   InterstitialAd? _interstitialAd;
   bool _isAdLoaded = false;
 
@@ -54,17 +52,16 @@ class _OperationsRecallState extends State<OperationsRecall> {
   void initState() {
     super.initState();
     _initializeGame();
-    _loadAd(); // Carreguem l'anunci en segon pla
+    _loadAd();
   }
 
   @override
   void dispose() {
     _stopwatch.stop();
-    _interstitialAd?.dispose(); // Alliberem memòria de l'anunci
+    _interstitialAd?.dispose();
     super.dispose();
   }
 
-  // Funció per carregar l'Interstitial d'Operacions
   void _loadAd() {
     InterstitialAd.load(
       adUnitId: AdHelper.getInterstitialAdId('operations'),
@@ -74,7 +71,7 @@ class _OperationsRecallState extends State<OperationsRecall> {
           ad.fullScreenContentCallback = FullScreenContentCallback(
             onAdDismissedFullScreenContent: (ad) {
               ad.dispose();
-              _loadAd(); // Pre-carreguem el següent
+              _loadAd();
             },
             onAdFailedToShowFullScreenContent: (ad, error) {
               ad.dispose();
@@ -110,28 +107,28 @@ class _OperationsRecallState extends State<OperationsRecall> {
       while (_operations.length < count) {
         int n1, n2, res;
         String sym;
-        int opType = random.nextInt(4); // 0:+, 1:-, 2:*, 3:/
+        int opType = random.nextInt(4);
 
         switch (opType) {
-          case 0: // Suma
+          case 0:
             n1 = random.nextInt(10) + 1;
             n2 = random.nextInt(10) + 1;
             sym = '+';
             res = n1 + n2;
             break;
-          case 1: // Resta
+          case 1:
             n1 = random.nextInt(10) + 1;
             n2 = random.nextInt(n1) + 1;
             sym = '-';
             res = n1 - n2;
             break;
-          case 2: // Multiplicació
+          case 2:
             n1 = random.nextInt(10) + 1;
             n2 = random.nextInt(10) + 1;
             sym = '×';
             res = n1 * n2;
             break;
-          case 3: // Divisió
+          case 3:
             n1 = random.nextInt(10) + 1;
             List<int> divisors = [];
             for (int i = 1; i <= n1; i++) {
@@ -201,7 +198,6 @@ class _OperationsRecallState extends State<OperationsRecall> {
     String timeLabel = widget.language == 'cat' ? 'Temps' : (widget.language == 'esp' ? 'Tiempo' : 'Time');
     String timeStr = min > 0 ? "\n$timeLabel: ${min}m ${sec}s" : "\n$timeLabel: ${sec}s";
 
-    // Funció per mostrar la UI de resultats
     void showResultUI() {
       setState(() {
         _isGameOver = true;
@@ -220,7 +216,6 @@ class _OperationsRecallState extends State<OperationsRecall> {
       });
     }
 
-    // MOSTRAR ANUNCI ABANS DEL PANELL
     if (_isAdLoaded && _interstitialAd != null) {
       _interstitialAd!.show().then((_) {
         showResultUI();
