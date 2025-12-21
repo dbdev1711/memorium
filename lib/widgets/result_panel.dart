@@ -22,7 +22,6 @@ class ResultPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Definició de traduccions internes per als botons
     final Map<String, Map<String, String>> translations = {
       'menu': {
         'cat': 'Menú',
@@ -49,7 +48,7 @@ class ResultPanel extends StatelessWidget {
         border: Border(top: BorderSide(color: color, width: 3)),
       ),
       child: Column(
-        mainAxisSize: MainAxisSize.min, // Ajusta l'espai al contingut
+        mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             title,
@@ -70,13 +69,12 @@ class ResultPanel extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Botó Menú
               TextButton(
                 onPressed: () {
                   Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(builder: (context) => const Menu()),
-                    (route) => false, // Neteja la pila de navegació
+                    (route) => false,
                   );
                 },
                 child: Text(
@@ -85,7 +83,6 @@ class ResultPanel extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              // Botó Nivells
               TextButton(
                 onPressed: onBackToLevels ?? () => Navigator.pop(context),
                 child: Text(
@@ -94,7 +91,6 @@ class ResultPanel extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              // Botó Reinicia
               TextButton(
                 onPressed: onRestart,
                 child: Text(
