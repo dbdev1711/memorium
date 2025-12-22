@@ -1,4 +1,4 @@
-name: memo
+name: memorium
 description: "Joc per treballar la memòria implementat en Flutter."
 publish_to: 'none'
 
@@ -10,22 +10,23 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  arkit_plugin: ^1.2.1
+
+  # UI i Estils
   google_fonts: ^6.3.2
   cupertino_icons: ^1.0.8
-  permission_handler: ^12.0.1
-  arcore_flutter_plugin: ^0.1.0
+
+  # Gestió d'estat i dades locals
   provider: ^6.1.5+1
-  firebase_auth: ^6.1.2
-  firebase_core: ^4.2.1
-  cloud_firestore: ^6.1.0
-  image_picker: ^1.2.1
   shared_preferences: ^2.5.4
-  firebase_storage: ^13.0.4
-  flutter_launcher_icons: ^0.14.4
-  http: ^1.6.0
-  file_picker: ^10.3.8
+
+  # Utilitats
+  permission_handler: ^12.0.1
+
+  # Publicitat
   google_mobile_ads: ^7.0.0
+
+  # Icones de l'app
+  flutter_launcher_icons: ^0.14.4
 
 flutter_launcher_icons:
   android: true

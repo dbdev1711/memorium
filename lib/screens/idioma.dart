@@ -1,6 +1,6 @@
 //screens/idioma.dart
 import 'package:flutter/material.dart';
-import 'package:memo/styles/app_styles.dart';
+import '../styles/app_styles.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'menu.dart';
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:memo/styles/app_styles.dart';
+import '../styles/app_styles.dart';
 import '../models/game_config.dart';
 import 'operations_level.dart';
 import 'pairs_level.dart';
