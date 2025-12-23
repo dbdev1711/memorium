@@ -21,7 +21,7 @@ class NumberRecall extends StatefulWidget {
 class _NumberRecallState extends State<NumberRecall> {
   List<CardItem> _cards = [];
   int _currentNumber = 1;
-  int _gameState = 0; // 0: Mem, 1: Play, 2: End
+  int _gameState = 0;
   bool _showResultPanel = false;
   String _resultTitle = '';
   String _resultMessage = '';
@@ -54,7 +54,7 @@ class _NumberRecallState extends State<NumberRecall> {
           ad.fullScreenContentCallback = FullScreenContentCallback(
             onAdDismissedFullScreenContent: (ad) {
               ad.dispose();
-              _loadAd(); // Pre-carreguem el següent
+              _loadAd();
             },
             onAdFailedToShowFullScreenContent: (ad, error) {
               ad.dispose();
@@ -157,13 +157,13 @@ class _NumberRecallState extends State<NumberRecall> {
       });
     }
 
-    // MOSTRAR ANUNCI ABANS DEL PANELL
     if (_isAdLoaded && _interstitialAd != null) {
       _interstitialAd!.show().then((_) {
         showResultUI();
         _isAdLoaded = false;
       });
-    } else {
+    }
+    else {
       showResultUI();
     }
   }
@@ -186,7 +186,7 @@ class _NumberRecallState extends State<NumberRecall> {
               child: Text(
                 _gameState == 0
                   ? (widget.language == 'cat' ? 'Memoritza els números' : widget.language == 'esp' ? 'Memoriza los números' : 'Remember the numbers')
-                  : '${widget.language == 'cat' ? 'Busca el ' : widget.language == 'esp' ? 'Busca el ' : 'Find '}$_currentNumber',
+                  : '${widget.language == 'cat' ? 'Troba el ' : widget.language == 'esp' ? 'Encuentra el ' : 'Get '}$_currentNumber',
                 style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blueGrey),
               ),
             ),

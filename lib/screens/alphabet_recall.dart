@@ -24,7 +24,7 @@ class _AlphabetRecallState extends State<AlphabetRecall> {
   List<CardItem> _cards = [];
   List<String> _alphabetSequence = [];
   String _currentLetter = 'A';
-  int _gameState = 0; // 0: Mem, 1: Play, 2: End
+  int _gameState = 0;
   bool _showResultPanel = false;
   String _resultTitle = '';
   String _resultMessage = '';
@@ -203,7 +203,8 @@ class _AlphabetRecallState extends State<AlphabetRecall> {
               child: Text(
                 _gameState == 0
                   ? (widget.language == 'cat' ? 'Memoritza les lletres' : widget.language == 'esp' ? 'Memoriza las letras' : 'Remember the letters')
-                  : '${widget.language == 'cat' ? 'Busca la' : widget.language == 'esp' ? 'Busca la' : 'Find'} $_currentLetter',
+                  : '${widget.language == 'cat' ? 'Troba la' : widget.language == 'esp' ? 'Encuentra la' : 'Get'} '
+                    '$_currentLetter',
                 style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blueGrey),
               ),
             ),
