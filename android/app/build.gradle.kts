@@ -1,4 +1,4 @@
-import java.util.Properties // Afegeix aquesta importació a dalt de tot
+import java.util.Properties
 
 // 1. Llegir el fitxer key.properties
 val keystoreProperties = Properties()
@@ -39,25 +39,38 @@ android {
 
     defaultConfig {
         applicationId = "db.memorium.memorium"
-        minSdk = flutter.minSdkVersion
+        // Forcem minSdk a 21 per evitar el VerifyError en dispositius antics amb AdMob
+        minSdk = 21 
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        
+        // Activem MultiDex per gestionar aplicacions amb moltes llibreries (com AdMob)
+        multiDexEnabled = true
     }
 
     buildTypes {
         release {
-            // 3. CANVIAR EL DEBUG PEL TEU NOU RELEASE
             signingConfig = signingConfigs.getByName("release")
             
-            // Opcional: Millora el rendiment i redueix el pes de l'app
+            // Optimització i protecció de codi
             isMinifyEnabled = true
             isShrinkResources = true
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            
+            // Apliquem el fitxer proguard-rules.pro que has creat
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"), 
+                "proguard-rules.pro"
+            )
         }
     }
 }
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    // Afegim la dependència de MultiDex per a suport en versions antigues d'Android
+    implementation("androidx.multidex:multidex:2.0.1")
 }
