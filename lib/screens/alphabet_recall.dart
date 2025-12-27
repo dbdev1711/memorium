@@ -204,47 +204,49 @@ class _AlphabetRecallState extends State<AlphabetRecall> {
           )
         ],
       ),
-      body: Column(
-        children: [
-          AppStyles.sizedBoxHeight20,
-          if (!_showResultPanel)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20.0),
-              child: Text(
-                _gameState == 0
-                  ? (widget.language == 'cat' ? 'Memoritza les lletres' : widget.language == 'esp' ? 'Memoriza las letras' : 'Remember the letters')
-                  : '${widget.language == 'cat' ? 'Troba la' : widget.language == 'esp' ? 'Encuentra la' : 'Get'} '
-                    '$_currentLetter',
-                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blueGrey),
+      body: SafeArea(
+        child: Column(
+          children: [
+            AppStyles.sizedBoxHeight20,
+            if (!_showResultPanel)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20.0),
+                child: Text(
+                  _gameState == 0
+                    ? (widget.language == 'cat' ? 'Memoritza les lletres' : widget.language == 'esp' ? 'Memoriza las letras' : 'Remember the letters')
+                    : '${widget.language == 'cat' ? 'Troba la' : widget.language == 'esp' ? 'Encuentra la' : 'Get'} '
+                      '$_currentLetter',
+                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blueGrey),
+                ),
+              ),
+
+            Expanded(
+              child: GridView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: widget.config.columns,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                ),
+                itemCount: _cards.length,
+                itemBuilder: (context, i) => CardWidget(
+                  card: _cards[i],
+                  onTap: () => _handleCardTap(_cards[i]),
+                  isNumberMode: false,
+                ),
               ),
             ),
 
-          Expanded(
-            child: GridView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: widget.config.columns,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
+            if (_showResultPanel)
+              ResultPanel(
+                title: _resultTitle,
+                message: _resultMessage,
+                color: _resultColor,
+                onRestart: _initializeGame,
+                language: widget.language,
               ),
-              itemCount: _cards.length,
-              itemBuilder: (context, i) => CardWidget(
-                card: _cards[i],
-                onTap: () => _handleCardTap(_cards[i]),
-                isNumberMode: false,
-              ),
-            ),
-          ),
-
-          if (_showResultPanel)
-            ResultPanel(
-              title: _resultTitle,
-              message: _resultMessage,
-              color: _resultColor,
-              onRestart: _initializeGame,
-              language: widget.language,
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }

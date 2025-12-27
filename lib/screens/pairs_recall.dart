@@ -238,25 +238,27 @@ class _PairsRecallState extends State<PairsRecall> {
         title: Text(widget.language == 'cat' ? 'Parelles' : 'Pairs', style: AppStyles.appBarText),
         actions: [IconButton(icon: const Icon(Icons.refresh), onPressed: _initializeGame)],
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20),
-            child: Text('$_matchesFound / $_totalPairsNeeded', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-          ),
-          Expanded(
-            child: GridView.builder(
-              padding: const EdgeInsets.all(12),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: widget.config.columns,
-                crossAxisSpacing: 8, mainAxisSpacing: 8,
-              ),
-              itemCount: _cards.length,
-              itemBuilder: (context, index) => CardWidget(card: _cards[index], onTap: () => _handleCardTap(_cards[index])),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              child: Text('$_matchesFound / $_totalPairsNeeded', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
             ),
-          ),
-          if (_showResultPanel) ResultPanel(title: _resultTitle, message: _resultMessage, color: _resultColor, onRestart: _initializeGame, language: widget.language),
-        ],
+            Expanded(
+              child: GridView.builder(
+                padding: const EdgeInsets.all(12),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: widget.config.columns,
+                  crossAxisSpacing: 8, mainAxisSpacing: 8,
+                ),
+                itemCount: _cards.length,
+                itemBuilder: (context, index) => CardWidget(card: _cards[index], onTap: () => _handleCardTap(_cards[index])),
+              ),
+            ),
+            if (_showResultPanel) ResultPanel(title: _resultTitle, message: _resultMessage, color: _resultColor, onRestart: _initializeGame, language: widget.language),
+          ],
+        ),
       ),
     );
   }

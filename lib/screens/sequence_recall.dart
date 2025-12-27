@@ -205,31 +205,33 @@ class _SequenceRecallState extends State<SequenceRecall> {
         title: Text(widget.language == 'cat' ? 'Seqüència' : widget.language == 'esp' ? 'Secuencia' : 'Sequence', style: AppStyles.appBarText),
         actions: [IconButton(icon: const Icon(Icons.refresh), onPressed: _initializeGame)],
       ),
-      body: Column(children: [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: _isChecking
-              ? AppStyles.sizedBoxHeight70
-              : Column(children: [
-                  Text(widget.language == 'cat' ? 'Repeteix la seqüència' : widget.language == 'esp' ? 'Repite la secuencia' : 'Repeat the sequence', style: const TextStyle(fontSize: 18)),
-                  Text('${widget.language == 'cat' ? 'Pas' : widget.language == 'esp' ? 'Paso' : 'Step'}: $_sequenceStep / ${_sequence.length}', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold))
-                ])
-        ),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: IgnorePointer(
-              ignoring: _isChecking,
-              child: GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: widget.config.columns, crossAxisSpacing: 10, mainAxisSpacing: 10),
-                itemCount: _cards.length,
-                itemBuilder: (context, i) => CardWidget(key: ValueKey(_cards[i].id), card: _cards[i], onTap: () => _handleCardTap(_cards[i])),
+      body: SafeArea(
+        child: Column(children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: _isChecking
+                ? AppStyles.sizedBoxHeight70
+                : Column(children: [
+                    Text(widget.language == 'cat' ? 'Repeteix la seqüència' : widget.language == 'esp' ? 'Repite la secuencia' : 'Repeat the sequence', style: const TextStyle(fontSize: 18)),
+                    Text('${widget.language == 'cat' ? 'Pas' : widget.language == 'esp' ? 'Paso' : 'Step'}: $_sequenceStep / ${_sequence.length}', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold))
+                  ])
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: IgnorePointer(
+                ignoring: _isChecking,
+                child: GridView.builder(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: widget.config.columns, crossAxisSpacing: 10, mainAxisSpacing: 10),
+                  itemCount: _cards.length,
+                  itemBuilder: (context, i) => CardWidget(key: ValueKey(_cards[i].id), card: _cards[i], onTap: () => _handleCardTap(_cards[i])),
+                ),
               ),
             ),
           ),
-        ),
-        if (_showResultPanel) ResultPanel(title: _resultTitle, message: _resultMessage, color: _resultColor, onRestart: _initializeGame, language: widget.language),
-      ]),
+          if (_showResultPanel) ResultPanel(title: _resultTitle, message: _resultMessage, color: _resultColor, onRestart: _initializeGame, language: widget.language),
+        ]),
+      ),
     );
   }
 }

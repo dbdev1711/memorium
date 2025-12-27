@@ -47,7 +47,6 @@ class _NumberRecallState extends State<NumberRecall> {
 
   void _loadAd() {
     InterstitialAd.load(
-      // Corregit a 'numbers' per coincidir amb el teu switch a AdHelper
       adUnitId: AdHelper.getInterstitialAdId('numbers'),
       request: const AdRequest(),
       adLoadCallback: InterstitialAdLoadCallback(
@@ -165,7 +164,6 @@ class _NumberRecallState extends State<NumberRecall> {
       });
     }
 
-    // APLICACIÓ DE LA LÒGICA DE FREQUÈNCIA (1 cada 4)
     if (_isAdLoaded && _interstitialAd != null && AdHelper.shouldShowAd()) {
       _interstitialAd!.show().then((_) {
         showResultUI();
@@ -187,48 +185,50 @@ class _NumberRecallState extends State<NumberRecall> {
         title: Text(appBarTitle, style: AppStyles.appBarText),
         actions: [IconButton(icon: const Icon(Icons.refresh), onPressed: _gameState == 0 ? null : _initializeGame)]
       ),
-      body: Column(
-        children: [
-          AppStyles.sizedBoxHeight20,
-          if (!_showResultPanel)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20),
-              child: Text(
-                _gameState == 0
-                  ? (widget.language == 'cat' ? 'Memoritza els números' : widget.language == 'esp' ? 'Memoriza los números' : 'Remember the numbers')
-                  : '${widget.language == 'cat' ? 'Troba el ' : widget.language == 'esp' ? 'Encuentra el ' : 'Get '}$_currentNumber',
-                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blueGrey),
-              ),
-            ),
-
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: widget.config.columns,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10
+      body: SafeArea(
+        child: Column(
+          children: [
+            AppStyles.sizedBoxHeight20,
+            if (!_showResultPanel)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: Text(
+                  _gameState == 0
+                    ? (widget.language == 'cat' ? 'Memoritza els números' : widget.language == 'esp' ? 'Memoriza los números' : 'Remember the numbers')
+                    : '${widget.language == 'cat' ? 'Troba el ' : widget.language == 'esp' ? 'Encuentra el ' : 'Get '}$_currentNumber',
+                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blueGrey),
                 ),
-                itemCount: _cards.length,
-                itemBuilder: (context, i) => CardWidget(
-                  card: _cards[i],
-                  onTap: () => _handleCardTap(_cards[i]),
-                  isNumberMode: true
+              ),
+        
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: GridView.builder(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: widget.config.columns,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10
+                  ),
+                  itemCount: _cards.length,
+                  itemBuilder: (context, i) => CardWidget(
+                    card: _cards[i],
+                    onTap: () => _handleCardTap(_cards[i]),
+                    isNumberMode: true
+                  )
                 )
               )
-            )
-          ),
-
-          if (_showResultPanel)
-            ResultPanel(
-              title: _resultTitle,
-              message: _resultMessage,
-              color: _resultColor,
-              onRestart: _initializeGame,
-              language: widget.language
             ),
-        ]),
+        
+            if (_showResultPanel)
+              ResultPanel(
+                title: _resultTitle,
+                message: _resultMessage,
+                color: _resultColor,
+                onRestart: _initializeGame,
+                language: widget.language
+              ),
+          ]),
+      ),
     );
   }
 }

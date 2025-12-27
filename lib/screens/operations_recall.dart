@@ -248,54 +248,56 @@ class _OperationsRecallState extends State<OperationsRecall> {
         centerTitle: true,
         actions: [IconButton(icon: const Icon(Icons.refresh), onPressed: _initializeGame)],
       ),
-      body: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(20.0),
-            width: double.infinity,
-            color: Colors.blue.shade50,
-            child: Text(instruction, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.blueGrey), textAlign: TextAlign.center),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: _operations.length <= 2 ? 1 : 2,
-                  mainAxisSpacing: 12,
-                  crossAxisSpacing: 12,
-                  childAspectRatio: _operations.length <= 2 ? 2.8 : 1.8,
-                ),
-                itemCount: _operations.length,
-                itemBuilder: (context, index) {
-                  final op = _operations[index];
-                  return GestureDetector(
-                    onTap: () => _handleSelection(op),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      decoration: BoxDecoration(
-                        color: op.isSelected ? Colors.blue.withOpacity(0.1) : Colors.white,
-                        borderRadius: BorderRadius.circular(15),
-                        border: Border.all(color: op.isSelected ? Colors.blue : Colors.grey.shade300, width: 3),
-                      ),
-                      child: Center(
-                        child: Text(
-                          op.expression,
-                          style: TextStyle(
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                            color: op.isSelected ? Colors.blue : Colors.black87
+      body: SafeArea(
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(20.0),
+              width: double.infinity,
+              color: Colors.blue.shade50,
+              child: Text(instruction, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.blueGrey), textAlign: TextAlign.center),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: GridView.builder(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: _operations.length <= 2 ? 1 : 2,
+                    mainAxisSpacing: 12,
+                    crossAxisSpacing: 12,
+                    childAspectRatio: _operations.length <= 2 ? 2.8 : 1.8,
+                  ),
+                  itemCount: _operations.length,
+                  itemBuilder: (context, index) {
+                    final op = _operations[index];
+                    return GestureDetector(
+                      onTap: () => _handleSelection(op),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        decoration: BoxDecoration(
+                          color: op.isSelected ? Colors.blue.withOpacity(0.1) : Colors.white,
+                          borderRadius: BorderRadius.circular(15),
+                          border: Border.all(color: op.isSelected ? Colors.blue : Colors.grey.shade300, width: 3),
+                        ),
+                        child: Center(
+                          child: Text(
+                            op.expression,
+                            style: TextStyle(
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                              color: op.isSelected ? Colors.blue : Colors.black87
+                            )
                           )
-                        )
+                        ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ),
-          ),
-          if (_showResultPanel) ResultPanel(title: _resultTitle, message: _resultMessage, color: _resultColor, onRestart: _initializeGame, language: widget.language),
-        ],
+            if (_showResultPanel) ResultPanel(title: _resultTitle, message: _resultMessage, color: _resultColor, onRestart: _initializeGame, language: widget.language),
+          ],
+        ),
       ),
     );
   }

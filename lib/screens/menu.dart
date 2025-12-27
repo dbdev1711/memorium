@@ -26,7 +26,6 @@ class _MenuState extends State<Menu> {
     _loadSettings();
   }
 
-  /// Carrega l'idioma des de SharedPreferences
   Future<void> _loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -35,7 +34,6 @@ class _MenuState extends State<Menu> {
     });
   }
 
-  /// Navegació cap als nivells o perfil
   void _navigateToModeSelection(BuildContext context, GameMode mode) {
     Widget targetScreen;
 
@@ -80,51 +78,54 @@ class _MenuState extends State<Menu> {
         title: const Text('Memorium', style: AppStyles.appBarText),
         centerTitle: true,
       ),
-      body: SizedBox(
-        width: double.infinity,
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              AppStyles.sizedBoxHeight40,
-              ...GameMode.values.map((mode) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10.0),
-                  child: ElevatedButton(
-                    onPressed: () => _navigateToModeSelection(context, mode),
-                    style: ElevatedButton.styleFrom(
-                      fixedSize: const Size(280, 90),
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
+      // Hem afegit el SafeArea aquí per protegir tot el contingut del body
+      body: SafeArea(
+        child: SizedBox(
+          width: double.infinity,
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                AppStyles.sizedBoxHeight40,
+                ...GameMode.values.map((mode) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10.0),
+                    child: ElevatedButton(
+                      onPressed: () => _navigateToModeSelection(context, mode),
+                      style: ElevatedButton.styleFrom(
+                        fixedSize: const Size(280, 90),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        elevation: 4,
                       ),
-                      elevation: 4,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            mode.getTitle(_currentLang),
+                            style: AppStyles.menuButtonTitle,
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            mode.getDescription(_currentLang),
+                            style: AppStyles.menuButtonDesc,
+                            textAlign: TextAlign.center,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
                     ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          mode.getTitle(_currentLang),
-                          style: AppStyles.menuButtonTitle,
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          mode.getDescription(_currentLang),
-                          style: AppStyles.menuButtonDesc,
-                          textAlign: TextAlign.center,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }).toList(),
-              const SizedBox(height: 30),
-            ],
+                  );
+                }).toList(),
+                const SizedBox(height: 30),
+              ],
+            ),
           ),
         ),
       ),
