@@ -31,7 +31,20 @@ class AdHelper {
       }
     }
     else if (Platform.isIOS) {
-      return 'ca-app-pub-5400203683183472/1576191494';
+      switch (gameType) {
+        case 'alphabet':
+          return 'ca-app-pub-5400203683183472/3667663051';
+        case 'numbers':
+          return 'ca-app-pub-5400203683183472/5332098517';
+        case 'operations':
+          return 'ca-app-pub-5400203683183472/7606908064';
+        case 'parelles':
+          return 'ca-app-pub-5400203683183472/5551590369';
+        case 'sequence':
+          return 'ca-app-pub-5400203683183472/2925427023';
+        default:
+          return 'ca-app-pub-5400203683183472/1576191494';
+      }
     }
     else {
       return 'ca-app-pub-3940256099942544/1033173712';

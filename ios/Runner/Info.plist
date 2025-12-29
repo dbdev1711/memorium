@@ -190,7 +190,5 @@
     <true/>
     <key>UIApplicationSupportsIndirectInputEvents</key>
     <true/>
-    <key>NSCameraUsageDescription</key>
-    <string>Necessitem accés a la càmera per a les funcions del joc.</string>
 </dict>
 </plist>
