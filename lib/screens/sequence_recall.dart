@@ -91,12 +91,23 @@ class _SequenceRecallState extends State<SequenceRecall> {
       _showResultPanel = false;
       _stopwatch.reset();
 
+      // 1. Creem totes les cartes buides per defecte
       for (int i = 0; i < widget.config.totalCards; i++) {
-        _cards.add(CardItem(id: i, content: '🔴'));
+        _cards.add(CardItem(id: i, content: ''));
       }
 
+      // 2. Triem quines cartes formaran la seqüència
       List<CardItem> shuffled = List.from(_cards)..shuffle(Random());
-      _sequence = shuffled.sublist(0, widget.config.sequenceLength);
+      List<CardItem> selectedItems = shuffled.sublist(0, widget.config.sequenceLength);
+
+      // 3. Assignem el punt vermell NOMÉS a les cartes de la seqüència
+      for (var seqItem in selectedItems) {
+        int idx = _cards.indexWhere((c) => c.id == seqItem.id);
+        _cards[idx] = _cards[idx].copyWith(content: '🔴');
+      }
+
+      // 4. Guardem la seqüència d'IDs per a la comprovació posterior
+      _sequence = selectedItems.map((c) => c.copyWith(content: '🔴')).toList();
 
       Future.delayed(const Duration(milliseconds: 500), _showSequence);
     });
@@ -110,7 +121,7 @@ class _SequenceRecallState extends State<SequenceRecall> {
     final showDuration = 800 + (diff * 300);
 
     for (int i = 0; i < _sequence.length; i++) {
-      final cardIdx = _cards.indexOf(_sequence[i]);
+      final cardIdx = _cards.indexWhere((c) => c.id == _sequence[i].id);
       Future.delayed(Duration(milliseconds: baseDelay * i), () {
         if (mounted) setState(() => _cards[cardIdx] = _cards[cardIdx].copyWith(isFlipped: true));
       }).then((_) {
@@ -130,19 +141,23 @@ class _SequenceRecallState extends State<SequenceRecall> {
     if (_isChecking || card.isFlipped) return;
     if (_sequenceStep == 0) _stopwatch.start();
 
+    // Girem la carta premuda: mostrarà 🔴 si en té, o res si estava buida
     setState(() => _cards[_cards.indexOf(card)] = card.copyWith(isFlipped: true));
 
     if (card.id == _sequence[_sequenceStep].id) {
+      // ÉS CORRECTE
       _sequenceStep++;
       if (_sequenceStep == _sequence.length) {
         _stopwatch.stop();
         _saveAndShow(true);
       } else {
+        // Feedback visual: la girem i la tornem a amagar
         Future.delayed(const Duration(milliseconds: 300), () {
           if (mounted) setState(() => _cards[_cards.indexOf(card)] = card.copyWith(isFlipped: false));
         });
       }
     } else {
+      // ÉS ERROR: Aturem i mostrem panel. La carta queda girada (i buida)
       _stopwatch.stop();
       _saveAndShow(false);
     }
@@ -186,7 +201,6 @@ class _SequenceRecallState extends State<SequenceRecall> {
       });
     }
 
-    // MODIFICACIÓ: Lògica de l'anunci 1 cada 4
     if (_isAdLoaded && _interstitialAd != null && AdHelper.shouldShowAd()) {
       _interstitialAd!.show().then((_) {
         displayResultUI();
@@ -222,9 +236,17 @@ class _SequenceRecallState extends State<SequenceRecall> {
               child: IgnorePointer(
                 ignoring: _isChecking,
                 child: GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: widget.config.columns, crossAxisSpacing: 10, mainAxisSpacing: 10),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: widget.config.columns,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10
+                  ),
                   itemCount: _cards.length,
-                  itemBuilder: (context, i) => CardWidget(key: ValueKey(_cards[i].id), card: _cards[i], onTap: () => _handleCardTap(_cards[i])),
+                  itemBuilder: (context, i) => CardWidget(
+                    key: ValueKey(_cards[i].id),
+                    card: _cards[i],
+                    onTap: () => _handleCardTap(_cards[i])
+                  ),
                 ),
               ),
             ),

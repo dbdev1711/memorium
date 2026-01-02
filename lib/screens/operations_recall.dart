@@ -168,11 +168,17 @@ class _OperationsRecallState extends State<OperationsRecall> {
   }
 
   void _handleSelection(OperationModel op) {
-    if (op.isSelected || _isGameOver) return;
+    if (_isGameOver) return;
 
     setState(() {
-      op.isSelected = true;
-      _userSelection.add(op);
+      if (op.isSelected) {
+        op.isSelected = false;
+        _userSelection.remove(op);
+      }
+      else {
+        op.isSelected = true;
+        _userSelection.add(op);
+      }
 
       if (_userSelection.length == _operations.length) {
         _checkResult();
@@ -195,7 +201,8 @@ class _OperationsRecallState extends State<OperationsRecall> {
     if (win) {
       _stopwatch.stop();
       _saveStats(_stopwatch.elapsedMilliseconds);
-    } else {
+    }
+    else {
       _stopwatch.stop();
     }
 
@@ -214,7 +221,8 @@ class _OperationsRecallState extends State<OperationsRecall> {
         if (win) {
           _resultTitle = widget.language == 'cat' ? '🎉 Molt bé!' : (widget.language == 'esp' ? '🎉 ¡Muy bien!' : '🎉 Well done!');
           _resultMessage = (widget.language == 'cat' ? 'Has ordenat correctament!' : (widget.language == 'esp' ? '¡Has ordenado correctamente!' : 'Correctly sorted!')) + timeStr;
-        } else {
+        }
+        else {
           _resultTitle = '❌ Error';
           _resultMessage = widget.language == 'cat'
               ? 'L\'ordre no és correcte.'
@@ -223,7 +231,6 @@ class _OperationsRecallState extends State<OperationsRecall> {
       });
     }
 
-    // Lògica centralitzada d'anuncis (1 cada 4 partides)
     if (_isAdLoaded && _interstitialAd != null && AdHelper.shouldShowAd()) {
       _interstitialAd!.show().then((_) {
         showResultUI();
@@ -257,6 +264,14 @@ class _OperationsRecallState extends State<OperationsRecall> {
               color: Colors.blue.shade50,
               child: Text(instruction, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.blueGrey), textAlign: TextAlign.center),
             ),
+            if (_userSelection.isNotEmpty && !_isGameOver)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Text(
+                  '${widget.language == 'cat' ? 'Seleccionats' : 'Seleccionados'}: ${_userSelection.length} / ${_operations.length}',
+                  style: const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
+                ),
+              ),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -270,6 +285,7 @@ class _OperationsRecallState extends State<OperationsRecall> {
                   itemCount: _operations.length,
                   itemBuilder: (context, index) {
                     final op = _operations[index];
+                    int orderIndex = _userSelection.indexOf(op) + 1;
                     return GestureDetector(
                       onTap: () => _handleSelection(op),
                       child: AnimatedContainer(
@@ -277,17 +293,41 @@ class _OperationsRecallState extends State<OperationsRecall> {
                         decoration: BoxDecoration(
                           color: op.isSelected ? Colors.blue.withOpacity(0.1) : Colors.white,
                           borderRadius: BorderRadius.circular(15),
-                          border: Border.all(color: op.isSelected ? Colors.blue : Colors.grey.shade300, width: 3),
+                          border: Border.all(
+                            color: op.isSelected ? Colors.blue : Colors.grey.shade300,
+                            width: 3
+                          ),
+                          boxShadow: [
+                            if (!op.isSelected)
+                              BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 5, offset: const Offset(0, 2))
+                          ]
                         ),
-                        child: Center(
-                          child: Text(
-                            op.expression,
-                            style: TextStyle(
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
-                              color: op.isSelected ? Colors.blue : Colors.black87
-                            )
-                          )
+                        child: Stack(
+                          children: [
+                            if (op.isSelected)
+                              Positioned(
+                                top: 8,
+                                right: 8,
+                                child: CircleAvatar(
+                                  radius: 12,
+                                  backgroundColor: Colors.blue,
+                                  child: Text(
+                                    '$orderIndex',
+                                    style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ),
+                            Center(
+                              child: Text(
+                                op.expression,
+                                style: TextStyle(
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.bold,
+                                  color: op.isSelected ? Colors.blue : Colors.black87
+                                )
+                              )
+                            ),
+                          ],
                         ),
                       ),
                     );

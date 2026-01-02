@@ -70,7 +70,6 @@ class _ProfileState extends State<Profile> {
             _selectedLanguage == 'cat' ? 'Guardat!' : _selectedLanguage == 'esp' ? '¡Guardado!' : 'Saved!',
             style: AppStyles.profileSnackBar)));
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -99,21 +98,19 @@ class _ProfileState extends State<Profile> {
       ),
     );
   }
-
   Widget _buildTableHeader() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
       child: Row(
         children: [
           Expanded(flex: 4, child: Text(_selectedLanguage == 'cat' ? 'Joc' : _selectedLanguage == 'esp' ? 'Juego' : 'Game', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15))),
-          Expanded(flex: 2, child: Text(_selectedLanguage == 'cat' ? 'Fàcil' : _selectedLanguage == 'esp' ? 'Fácil' : 'Easy', textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green, fontSize: 15))),
-          Expanded(flex: 2, child: Text(_selectedLanguage == 'cat' ? 'Mitjà' : _selectedLanguage == 'esp' ? 'Medio' : 'Medium', textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.orange, fontSize: 15))),
-          Expanded(flex: 2, child: Text(_selectedLanguage == 'cat' ? 'Difícil' : _selectedLanguage == 'esp' ? 'Difícil' : 'Hard', textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.red, fontSize: 15))),
+          Expanded(flex: 2, child: Center(child: FittedBox(fit: BoxFit.scaleDown, child: Text(_selectedLanguage == 'cat' ? 'Fàcil' : _selectedLanguage == 'esp' ? 'Fácil' : 'Easy', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green, fontSize: 15))))),
+          Expanded(flex: 2, child: Center(child: FittedBox(fit: BoxFit.scaleDown, child: Text(_selectedLanguage == 'cat' ? 'Mitjà' : _selectedLanguage == 'esp' ? 'Medio' : 'Medium', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.orange, fontSize: 15))))),
+          Expanded(flex: 2, child: Center(child: FittedBox(fit: BoxFit.scaleDown, child: Text(_selectedLanguage == 'cat' ? 'Difícil' : _selectedLanguage == 'esp' ? 'Difícil' : 'Hard', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.red, fontSize: 15))))),
         ],
       ),
     );
   }
-
   Widget _buildGameRow(String name, Map<String, String> levels, IconData icon) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 4.0),
@@ -148,7 +145,6 @@ class _ProfileState extends State<Profile> {
       ),
     );
   }
-
   Widget _buildSettingsCard() {
     return Card(
       elevation: 4,
@@ -167,7 +163,7 @@ class _ProfileState extends State<Profile> {
             ),
             AppStyles.sizedBoxHeight20,
             DropdownButtonFormField<String>(
-              value: _selectedLanguage,
+              initialValue: _selectedLanguage,
               decoration: InputDecoration(
                 labelText: _selectedLanguage == 'cat' ? 'Idioma' : _selectedLanguage == 'esp' ? 'Idioma' : 'Language',
                 prefixIcon: const Icon(Icons.language),

@@ -71,7 +71,6 @@ class _MenuState extends State<Menu> {
     if (_isLoading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
-
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -90,12 +89,12 @@ class _MenuState extends State<Menu> {
                 AppStyles.sizedBoxHeight40,
                 ...GameMode.values.map((mode) {
                   return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10.0),
+                    padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
                     child: ElevatedButton(
                       onPressed: () => _navigateToModeSelection(context, mode),
                       style: ElevatedButton.styleFrom(
-                        fixedSize: const Size(280, 90),
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        fixedSize: Size(MediaQuery.of(context).size.width * 0.85, 100),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15),
                         ),
@@ -104,18 +103,27 @@ class _MenuState extends State<Menu> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
-                            mode.getTitle(_currentLang),
-                            style: AppStyles.menuButtonTitle,
-                            textAlign: TextAlign.center,
+                          FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              mode.getTitle(_currentLang),
+                              style: AppStyles.menuButtonTitle,
+                              textAlign: TextAlign.center,
+                            ),
                           ),
-                          const SizedBox(height: 6),
-                          Text(
-                            mode.getDescription(_currentLang),
-                            style: AppStyles.menuButtonDesc,
-                            textAlign: TextAlign.center,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
+                          const SizedBox(height: 4),
+                          Expanded(
+                            child: Center(
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  mode.getDescription(_currentLang),
+                                  style: AppStyles.menuButtonDesc,
+                                  textAlign: TextAlign.center,
+                                  maxLines: 2,
+                                ),
+                              ),
+                            ),
                           ),
                         ],
                       ),
