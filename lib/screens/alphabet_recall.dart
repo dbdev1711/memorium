@@ -42,6 +42,7 @@ class _AlphabetRecallState extends State<AlphabetRecall> {
 
   @override
   void dispose() {
+    _stopwatch.stop();
     _interstitialAd?.dispose();
     super.dispose();
   }
@@ -158,7 +159,6 @@ class _AlphabetRecallState extends State<AlphabetRecall> {
       timeStr = minTime > 0 ? "\n$label: ${minTime}m ${secTime}s" : "\n$label: ${secTime}s";
     }
 
-    // Aquesta funció mostra la UI final
     void showResultUI() {
       if (!mounted) return;
       setState(() {
@@ -177,7 +177,6 @@ class _AlphabetRecallState extends State<AlphabetRecall> {
       });
     }
 
-    // Lògica de control de l'anunci: només si està carregat i el comptador diu que toca
     if (_isAdLoaded && _interstitialAd != null && AdHelper.shouldShowAd()) {
       _interstitialAd!.show().then((_) {
         showResultUI();
@@ -221,18 +220,32 @@ class _AlphabetRecallState extends State<AlphabetRecall> {
               ),
 
             Expanded(
-              child: GridView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: widget.config.columns,
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 12,
-                ),
-                itemCount: _cards.length,
-                itemBuilder: (context, i) => CardWidget(
-                  card: _cards[i],
-                  onTap: () => _handleCardTap(_cards[i]),
-                  isNumberMode: false,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final double width = constraints.maxWidth;
+                    final double height = constraints.maxHeight;
+                    
+                    final double cellWidth = width / widget.config.columns;
+                    final double cellHeight = height / widget.config.rows;
+
+                    return GridView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: widget.config.columns,
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 10,
+                        childAspectRatio: cellWidth / cellHeight,
+                      ),
+                      itemCount: _cards.length,
+                      itemBuilder: (context, i) => CardWidget(
+                        card: _cards[i],
+                        onTap: () => _handleCardTap(_cards[i]),
+                        isNumberMode: false,
+                      ),
+                    );
+                  },
                 ),
               ),
             ),

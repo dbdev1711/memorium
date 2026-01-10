@@ -213,7 +213,6 @@ class _PairsRecallState extends State<PairsRecall> {
       });
     }
 
-    // MODIFICACIÓ: Implementació del comptador d'anuncis (1 cada 4)
     if (_isAdLoaded && _interstitialAd != null && AdHelper.shouldShowAd()) {
       _interstitialAd!.show().then((_) {
         displayResult();
@@ -246,17 +245,41 @@ class _PairsRecallState extends State<PairsRecall> {
               child: Text('$_matchesFound / $_totalPairsNeeded', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
             ),
             Expanded(
-              child: GridView.builder(
-                padding: const EdgeInsets.all(12),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: widget.config.columns,
-                  crossAxisSpacing: 8, mainAxisSpacing: 8,
-                ),
-                itemCount: _cards.length,
-                itemBuilder: (context, index) => CardWidget(card: _cards[index], onTap: () => _handleCardTap(_cards[index])),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  // Càlcul de mides per iPad per evitar desbordaments
+                  final double width = constraints.maxWidth - 24; // Padding 12+12
+                  final double height = constraints.maxHeight - 24; // Padding 12+12
+
+                  final double cellWidth = width / widget.config.columns;
+                  final double cellHeight = height / widget.config.rows;
+
+                  return GridView.builder(
+                    physics: const NeverScrollableScrollPhysics(), // Bloqueja el scroll per fixar la graella
+                    padding: const EdgeInsets.all(12),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: widget.config.columns,
+                      crossAxisSpacing: 8,
+                      mainAxisSpacing: 8,
+                      childAspectRatio: cellWidth / cellHeight, // Proporció dinàmica
+                    ),
+                    itemCount: _cards.length,
+                    itemBuilder: (context, index) => CardWidget(
+                      card: _cards[index], 
+                      onTap: () => _handleCardTap(_cards[index])
+                    ),
+                  );
+                },
               ),
             ),
-            if (_showResultPanel) ResultPanel(title: _resultTitle, message: _resultMessage, color: _resultColor, onRestart: _initializeGame, language: widget.language),
+            if (_showResultPanel) 
+              ResultPanel(
+                title: _resultTitle, 
+                message: _resultMessage, 
+                color: _resultColor, 
+                onRestart: _initializeGame, 
+                language: widget.language
+              ),
           ],
         ),
       ),

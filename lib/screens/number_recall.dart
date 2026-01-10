@@ -203,19 +203,32 @@ class _NumberRecallState extends State<NumberRecall> {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(16),
-                child: GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: widget.config.columns,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10
-                  ),
-                  itemCount: _cards.length,
-                  itemBuilder: (context, i) => CardWidget(
-                    card: _cards[i],
-                    onTap: () => _handleCardTap(_cards[i]),
-                    isNumberMode: true
-                  )
-                )
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    // Càlcul dinàmic de mides per a la graella numèrica
+                    final double width = constraints.maxWidth;
+                    final double height = constraints.maxHeight;
+
+                    final double cellWidth = width / widget.config.columns;
+                    final double cellHeight = height / widget.config.rows;
+
+                    return GridView.builder(
+                      physics: const NeverScrollableScrollPhysics(), // Evita el scroll per mantenir el joc en pantalla
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: widget.config.columns,
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 10,
+                        childAspectRatio: (cellWidth / cellHeight), // Ajust de proporció dinàmic
+                      ),
+                      itemCount: _cards.length,
+                      itemBuilder: (context, i) => CardWidget(
+                        card: _cards[i],
+                        onTap: () => _handleCardTap(_cards[i]),
+                        isNumberMode: true
+                      )
+                    );
+                  }
+                ),
               )
             ),
         

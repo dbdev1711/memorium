@@ -275,63 +275,79 @@ class _OperationsRecallState extends State<OperationsRecall> {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: _operations.length <= 2 ? 1 : 2,
-                    mainAxisSpacing: 12,
-                    crossAxisSpacing: 12,
-                    childAspectRatio: _operations.length <= 2 ? 2.8 : 1.8,
-                  ),
-                  itemCount: _operations.length,
-                  itemBuilder: (context, index) {
-                    final op = _operations[index];
-                    int orderIndex = _userSelection.indexOf(op) + 1;
-                    return GestureDetector(
-                      onTap: () => _handleSelection(op),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        decoration: BoxDecoration(
-                          color: op.isSelected ? Colors.blue.withValues(alpha:0.1): Colors.white,
-                          borderRadius: BorderRadius.circular(15),
-                          border: Border.all(
-                            color: op.isSelected ? Colors.blue : Colors.grey.shade300,
-                            width: 3
-                          ),
-                          boxShadow: [
-                            if (!op.isSelected)
-                              BoxShadow(color: Colors.black..withValues(alpha:0.05), blurRadius: 5, offset: const Offset(0, 2))
-                          ]
-                        ),
-                        child: Stack(
-                          children: [
-                            if (op.isSelected)
-                              Positioned(
-                                top: 8,
-                                right: 8,
-                                child: CircleAvatar(
-                                  radius: 12,
-                                  backgroundColor: Colors.blue,
-                                  child: Text(
-                                    '$orderIndex',
-                                    style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                              ),
-                            Center(
-                              child: Text(
-                                op.expression,
-                                style: TextStyle(
-                                  fontSize: 28,
-                                  fontWeight: FontWeight.bold,
-                                  color: op.isSelected ? Colors.blue : Colors.black87
-                                )
-                              )
-                            ),
-                          ],
-                        ),
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    // Càlcul dinàmic de files i columnes segons la quantitat d'operacions
+                    int columns = _operations.length <= 2 ? 1 : 2;
+                    int rows = (_operations.length / columns).ceil();
+
+                    final double width = constraints.maxWidth;
+                    final double height = constraints.maxHeight;
+
+                    // Calculem l'aspect ratio per omplir l'espai disponible
+                    final double cellWidth = width / columns;
+                    final double cellHeight = height / rows;
+
+                    return GridView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: columns,
+                        mainAxisSpacing: 12,
+                        crossAxisSpacing: 12,
+                        childAspectRatio: cellWidth / cellHeight,
                       ),
+                      itemCount: _operations.length,
+                      itemBuilder: (context, index) {
+                        final op = _operations[index];
+                        int orderIndex = _userSelection.indexOf(op) + 1;
+                        return GestureDetector(
+                          onTap: () => _handleSelection(op),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            decoration: BoxDecoration(
+                              color: op.isSelected ? Colors.blue.withValues(alpha: 0.1) : Colors.white,
+                              borderRadius: BorderRadius.circular(15),
+                              border: Border.all(
+                                color: op.isSelected ? Colors.blue : Colors.grey.shade300,
+                                width: 3
+                              ),
+                              boxShadow: [
+                                if (!op.isSelected)
+                                  BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 5, offset: const Offset(0, 2))
+                              ]
+                            ),
+                            child: Stack(
+                              children: [
+                                if (op.isSelected)
+                                  Positioned(
+                                    top: 12,
+                                    right: 12,
+                                    child: CircleAvatar(
+                                      radius: 14,
+                                      backgroundColor: Colors.blue,
+                                      child: Text(
+                                        '$orderIndex',
+                                        style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ),
+                                Center(
+                                  child: Text(
+                                    op.expression,
+                                    style: TextStyle(
+                                      fontSize: 32, // Mida de font augmentada per a millor visibilitat en iPad
+                                      fontWeight: FontWeight.bold,
+                                      color: op.isSelected ? Colors.blue : Colors.black87
+                                    )
+                                  )
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
                     );
-                  },
+                  }
                 ),
               ),
             ),

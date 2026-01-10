@@ -235,18 +235,31 @@ class _SequenceRecallState extends State<SequenceRecall> {
               padding: const EdgeInsets.all(8.0),
               child: IgnorePointer(
                 ignoring: _isChecking,
-                child: GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: widget.config.columns,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10
-                  ),
-                  itemCount: _cards.length,
-                  itemBuilder: (context, i) => CardWidget(
-                    key: ValueKey(_cards[i].id),
-                    card: _cards[i],
-                    onTap: () => _handleCardTap(_cards[i])
-                  ),
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    // Càlcul dinàmic per iPad per evitar desbordaments verticals
+                    final double width = constraints.maxWidth;
+                    final double height = constraints.maxHeight;
+
+                    final double cellWidth = width / widget.config.columns;
+                    final double cellHeight = height / widget.config.rows;
+
+                    return GridView.builder(
+                      physics: const NeverScrollableScrollPhysics(), // Bloqueig de scroll
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: widget.config.columns,
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 10,
+                        childAspectRatio: cellWidth / cellHeight, // Ajust de proporció segons pantalla
+                      ),
+                      itemCount: _cards.length,
+                      itemBuilder: (context, i) => CardWidget(
+                        key: ValueKey(_cards[i].id),
+                        card: _cards[i],
+                        onTap: () => _handleCardTap(_cards[i])
+                      ),
+                    );
+                  }
                 ),
               ),
             ),
