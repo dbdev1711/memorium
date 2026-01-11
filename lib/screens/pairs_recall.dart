@@ -247,21 +247,29 @@ class _PairsRecallState extends State<PairsRecall> {
             Expanded(
               child: LayoutBuilder(
                 builder: (context, constraints) {
-                  // Càlcul de mides per iPad per evitar desbordaments
-                  final double width = constraints.maxWidth - 24; // Padding 12+12
-                  final double height = constraints.maxHeight - 24; // Padding 12+12
+                  // Càlcul precís d'espais
+                  const double gridPadding = 12.0;
+                  const double gridSpacing = 8.0;
+                  
+                  final double width = constraints.maxWidth - (gridPadding * 2); 
+                  final double height = constraints.maxHeight - (gridPadding * 2); 
 
-                  final double cellWidth = width / widget.config.columns;
-                  final double cellHeight = height / widget.config.rows;
+                  // Restem l'espai que ocupen els "gaps" horitzontals i verticals
+                  final double totalHorizontalSpacing = gridSpacing * (widget.config.columns - 1);
+                  final double totalVerticalSpacing = gridSpacing * (widget.config.rows - 1);
+
+                  // Calculem la mida de la cel·la neta, afegint -12px de seguretat vertical
+                  final double cellWidth = (width - totalHorizontalSpacing) / widget.config.columns;
+                  final double cellHeight = (height - totalVerticalSpacing - 12) / widget.config.rows;
 
                   return GridView.builder(
-                    physics: const NeverScrollableScrollPhysics(), // Bloqueja el scroll per fixar la graella
-                    padding: const EdgeInsets.all(12),
+                    physics: const NeverScrollableScrollPhysics(),
+                    padding: const EdgeInsets.all(gridPadding),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: widget.config.columns,
-                      crossAxisSpacing: 8,
-                      mainAxisSpacing: 8,
-                      childAspectRatio: cellWidth / cellHeight, // Proporció dinàmica
+                      crossAxisSpacing: gridSpacing,
+                      mainAxisSpacing: gridSpacing,
+                      childAspectRatio: cellWidth / cellHeight,
                     ),
                     itemCount: _cards.length,
                     itemBuilder: (context, index) => CardWidget(

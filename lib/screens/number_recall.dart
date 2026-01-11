@@ -205,20 +205,23 @@ class _NumberRecallState extends State<NumberRecall> {
                 padding: const EdgeInsets.all(16),
                 child: LayoutBuilder(
                   builder: (context, constraints) {
-                    // Càlcul dinàmic de mides per a la graella numèrica
+                    const double spacing = 10.0;
                     final double width = constraints.maxWidth;
                     final double height = constraints.maxHeight;
 
-                    final double cellWidth = width / widget.config.columns;
-                    final double cellHeight = height / widget.config.rows;
+                    final double totalHorizontalSpacing = spacing * (widget.config.columns - 1);
+                    final double totalVerticalSpacing = spacing * (widget.config.rows - 1);
+
+                    final double cellWidth = (width - totalHorizontalSpacing) / widget.config.columns;
+                    final double cellHeight = (height - totalVerticalSpacing - 12) / widget.config.rows;
 
                     return GridView.builder(
-                      physics: const NeverScrollableScrollPhysics(), // Evita el scroll per mantenir el joc en pantalla
+                      physics: const NeverScrollableScrollPhysics(),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: widget.config.columns,
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 10,
-                        childAspectRatio: (cellWidth / cellHeight), // Ajust de proporció dinàmic
+                        crossAxisSpacing: spacing,
+                        mainAxisSpacing: spacing,
+                        childAspectRatio: cellWidth / cellHeight,
                       ),
                       itemCount: _cards.length,
                       itemBuilder: (context, i) => CardWidget(
@@ -240,7 +243,8 @@ class _NumberRecallState extends State<NumberRecall> {
                 onRestart: _initializeGame,
                 language: widget.language
               ),
-          ]),
+          ],
+        ),
       ),
     );
   }

@@ -277,23 +277,25 @@ class _OperationsRecallState extends State<OperationsRecall> {
                 padding: const EdgeInsets.all(16.0),
                 child: LayoutBuilder(
                   builder: (context, constraints) {
-                    // Càlcul dinàmic de files i columnes segons la quantitat d'operacions
+                    const double spacing = 12.0;
                     int columns = _operations.length <= 2 ? 1 : 2;
                     int rows = (_operations.length / columns).ceil();
 
                     final double width = constraints.maxWidth;
                     final double height = constraints.maxHeight;
 
-                    // Calculem l'aspect ratio per omplir l'espai disponible
-                    final double cellWidth = width / columns;
-                    final double cellHeight = height / rows;
+                    final double totalHorizontalSpacing = spacing * (columns - 1);
+                    final double totalVerticalSpacing = spacing * (rows - 1);
+
+                    final double cellWidth = (width - totalHorizontalSpacing) / columns;
+                    final double cellHeight = (height - totalVerticalSpacing - 12) / rows;
 
                     return GridView.builder(
                       physics: const NeverScrollableScrollPhysics(),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: columns,
-                        mainAxisSpacing: 12,
-                        crossAxisSpacing: 12,
+                        mainAxisSpacing: spacing,
+                        crossAxisSpacing: spacing,
                         childAspectRatio: cellWidth / cellHeight,
                       ),
                       itemCount: _operations.length,
@@ -335,7 +337,7 @@ class _OperationsRecallState extends State<OperationsRecall> {
                                   child: Text(
                                     op.expression,
                                     style: TextStyle(
-                                      fontSize: 32, // Mida de font augmentada per a millor visibilitat en iPad
+                                      fontSize: 32,
                                       fontWeight: FontWeight.bold,
                                       color: op.isSelected ? Colors.blue : Colors.black87
                                     )

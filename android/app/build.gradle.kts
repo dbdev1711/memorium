@@ -24,7 +24,7 @@ android {
         applicationId = "db.memorium.memorium"
         minSdk = flutter.minSdkVersion
         targetSdk = 36
-        versionCode = 18
+        versionCode = 23
         versionName = "1.2.0"
         multiDexEnabled = true
     }

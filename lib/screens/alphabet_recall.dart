@@ -227,15 +227,21 @@ class _AlphabetRecallState extends State<AlphabetRecall> {
                     final double width = constraints.maxWidth;
                     final double height = constraints.maxHeight;
                     
-                    final double cellWidth = width / widget.config.columns;
-                    final double cellHeight = height / widget.config.rows;
+                    // Millora de càlcul: restem els espais buits (10px per cada separació) 
+                    // i un marge extra de 12px per seguretat.
+                    const double spacing = 10.0;
+                    final double totalVerticalSpacing = spacing * (widget.config.rows - 1);
+                    final double totalHorizontalSpacing = spacing * (widget.config.columns - 1);
+
+                    final double cellWidth = (width - totalHorizontalSpacing) / widget.config.columns;
+                    final double cellHeight = (height - totalVerticalSpacing - 12) / widget.config.rows;
 
                     return GridView.builder(
                       physics: const NeverScrollableScrollPhysics(),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: widget.config.columns,
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 10,
+                        crossAxisSpacing: spacing,
+                        mainAxisSpacing: spacing,
                         childAspectRatio: cellWidth / cellHeight,
                       ),
                       itemCount: _cards.length,

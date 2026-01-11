@@ -91,22 +91,18 @@ class _SequenceRecallState extends State<SequenceRecall> {
       _showResultPanel = false;
       _stopwatch.reset();
 
-      // 1. Creem totes les cartes buides per defecte
       for (int i = 0; i < widget.config.totalCards; i++) {
         _cards.add(CardItem(id: i, content: ''));
       }
 
-      // 2. Triem quines cartes formaran la seqüència
       List<CardItem> shuffled = List.from(_cards)..shuffle(Random());
       List<CardItem> selectedItems = shuffled.sublist(0, widget.config.sequenceLength);
 
-      // 3. Assignem el punt vermell NOMÉS a les cartes de la seqüència
       for (var seqItem in selectedItems) {
         int idx = _cards.indexWhere((c) => c.id == seqItem.id);
         _cards[idx] = _cards[idx].copyWith(content: '🔴');
       }
 
-      // 4. Guardem la seqüència d'IDs per a la comprovació posterior
       _sequence = selectedItems.map((c) => c.copyWith(content: '🔴')).toList();
 
       Future.delayed(const Duration(milliseconds: 500), _showSequence);
@@ -141,23 +137,19 @@ class _SequenceRecallState extends State<SequenceRecall> {
     if (_isChecking || card.isFlipped) return;
     if (_sequenceStep == 0) _stopwatch.start();
 
-    // Girem la carta premuda: mostrarà 🔴 si en té, o res si estava buida
     setState(() => _cards[_cards.indexOf(card)] = card.copyWith(isFlipped: true));
 
     if (card.id == _sequence[_sequenceStep].id) {
-      // ÉS CORRECTE
       _sequenceStep++;
       if (_sequenceStep == _sequence.length) {
         _stopwatch.stop();
         _saveAndShow(true);
       } else {
-        // Feedback visual: la girem i la tornem a amagar
         Future.delayed(const Duration(milliseconds: 300), () {
           if (mounted) setState(() => _cards[_cards.indexOf(card)] = card.copyWith(isFlipped: false));
         });
       }
     } else {
-      // ÉS ERROR: Aturem i mostrem panel. La carta queda girada (i buida)
       _stopwatch.stop();
       _saveAndShow(false);
     }
@@ -237,20 +229,23 @@ class _SequenceRecallState extends State<SequenceRecall> {
                 ignoring: _isChecking,
                 child: LayoutBuilder(
                   builder: (context, constraints) {
-                    // Càlcul dinàmic per iPad per evitar desbordaments verticals
+                    const double spacing = 10.0;
                     final double width = constraints.maxWidth;
                     final double height = constraints.maxHeight;
 
-                    final double cellWidth = width / widget.config.columns;
-                    final double cellHeight = height / widget.config.rows;
+                    final double totalHorizontalSpacing = spacing * (widget.config.columns - 1);
+                    final double totalVerticalSpacing = spacing * (widget.config.rows - 1);
+
+                    final double cellWidth = (width - totalHorizontalSpacing) / widget.config.columns;
+                    final double cellHeight = (height - totalVerticalSpacing - 12) / widget.config.rows;
 
                     return GridView.builder(
-                      physics: const NeverScrollableScrollPhysics(), // Bloqueig de scroll
+                      physics: const NeverScrollableScrollPhysics(),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: widget.config.columns,
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 10,
-                        childAspectRatio: cellWidth / cellHeight, // Ajust de proporció segons pantalla
+                        crossAxisSpacing: spacing,
+                        mainAxisSpacing: spacing,
+                        childAspectRatio: cellWidth / cellHeight,
                       ),
                       itemCount: _cards.length,
                       itemBuilder: (context, i) => CardWidget(
