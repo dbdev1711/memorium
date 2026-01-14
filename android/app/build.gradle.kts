@@ -57,34 +57,11 @@ flutter {
 }
 
 dependencies {
-    // AndroidX i Core Libraries
+
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
     implementation("androidx.lifecycle:lifecycle-common-java8:2.8.7")
     implementation("androidx.annotation:annotation:1.9.1")
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("androidx.core:core-ktx:1.15.0")
-
-    // Configuració de rutes del SDK de Flutter
-    val properties = Properties()
-    val propertiesFile = rootProject.file("local.properties")
-    if (propertiesFile.exists()) {
-        propertiesFile.inputStream().use { properties.load(it) }
-    }
-    val flutterSdkPath = properties.getProperty("flutter.sdk") ?: ""
-    
-    // 1. Resolem errors de 'io.flutter' (MainActivity i Registrant)
-    if (flutterSdkPath.isNotEmpty()) {
-        compileOnly(files("$flutterSdkPath/bin/cache/artifacts/engine/android-arm64/flutter.jar"))
-    }
-
-    // 2. Resolem els 7 errors de plugins (Forcem l'enllaç manual)
-    // Això permet que el compilador de Java trobi les classes dels plugins descarregats
-    implementation(project(":google_mobile_ads"))
-    implementation(project(":package_info_plus"))
-    implementation(project(":path_provider_android"))
-    implementation(project(":permission_handler_android"))
-    implementation(project(":shared_preferences_android"))
-    implementation(project(":url_launcher_android"))
-    implementation(project(":webview_flutter_android"))
 }
