@@ -74,6 +74,6 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("androidx.core:core-ktx:1.15.0")
     
-    // El plugin de Flutter ja gestiona les dependències del motor automàticament.
-    // No cal afegir el flutter.jar manualment aquí.
+    // Aquesta línia és CRUCIAL. Si no hi és, afegeix-la:
+    implementation(kotlin("stdlib-jdk7"))
 }
