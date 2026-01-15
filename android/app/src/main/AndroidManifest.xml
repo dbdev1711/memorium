@@ -33,7 +33,7 @@ package="db.memorium.memorium">
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-5400203683183472~3874163720"/>
+            android:value="ca-app-pub-5400203683183472~9347003752"/>
     </application>
 
     <queries>
