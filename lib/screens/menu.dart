@@ -80,25 +80,24 @@ class _MenuState extends State<Menu> {
       ),
       body: SafeArea(
         child: MediaQuery(
-          // Forcem que la mida del text ignori la configuració del sistema
           data: MediaQuery.of(context).copyWith(textScaler: TextScaler.noScaling),
-          child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Column(
-              children: modes.map((mode) {
-                return Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 6.0),
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
+              child: Column(
+                children: modes.map((mode) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 20.0),
                     child: SizedBox(
                       width: double.infinity,
+                      height: 110,
                       child: ElevatedButton(
                         onPressed: () => _navigateToModeSelection(context, mode),
                         style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
+                            borderRadius: BorderRadius.circular(20),
                           ),
-                          elevation: 4,
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          elevation: 5,
                         ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -108,7 +107,7 @@ class _MenuState extends State<Menu> {
                               child: Text(
                                 mode.getTitle(_currentLang),
                                 style: const TextStyle(
-                                  fontSize: 24,
+                                  fontSize: 32,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -119,7 +118,7 @@ class _MenuState extends State<Menu> {
                               child: Text(
                                 mode.getDescription(_currentLang),
                                 style: const TextStyle(
-                                  fontSize: 18,
+                                  fontSize: 20,
                                   fontWeight: FontWeight.w400,
                                   color: Colors.white,
                                 ),
@@ -131,9 +130,9 @@ class _MenuState extends State<Menu> {
                         ),
                       ),
                     ),
-                  ),
-                );
-              }).toList(),
+                  );
+                }).toList(),
+              ),
             ),
           ),
         ),
