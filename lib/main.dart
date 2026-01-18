@@ -40,7 +40,6 @@ class App extends StatelessWidget {
 
   const App({super.key, required this.isFirstRun, required this.savedLang});
 
-  // Mapeig de l'idioma intern de l'app al codi ISO d'Upgrader [cite: 2025-12-30]
   String _getUpgraderCode() {
     switch (savedLang) {
       case 'esp':

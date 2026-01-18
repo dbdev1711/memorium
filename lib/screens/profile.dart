@@ -15,7 +15,6 @@ class _ProfileState extends State<Profile> {
   String _selectedLanguage = 'cat';
 
   final Map<String, Map<String, String>> _results = {
-    //'alphabet': {'Facil': '-', 'Mitja': '-', 'Dificil': '-'},
     'number': {'Facil': '-', 'Mitja': '-', 'Dificil': '-'},
     'operations': {'Facil': '-', 'Mitja': '-', 'Dificil': '-'},
     'parelles': {'Facil': '-', 'Mitja': '-', 'Dificil': '-'},
@@ -34,7 +33,6 @@ class _ProfileState extends State<Profile> {
       _selectedLanguage = prefs.getString('language') ?? 'cat';
       _nomController.text = prefs.getString('user_name') ?? '';
 
-      //_results['alphabet'] = _getAllLevels(prefs, 'time_alphabet');
       _results['number'] = _getAllLevels(prefs, 'time_number');
       _results['operations'] = _getAllLevels(prefs, 'time_operations');
       _results['parelles'] = _getAllLevels(prefs, 'time_parelles');
@@ -70,47 +68,61 @@ class _ProfileState extends State<Profile> {
             _selectedLanguage == 'cat' ? 'Guardat!' : _selectedLanguage == 'esp' ? '¡Guardado!' : 'Saved!',
             style: AppStyles.profileSnackBar)));
   }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(_selectedLanguage == 'cat' ? 'Perfil' : _selectedLanguage == 'esp' ? 'Perfil' : 'Profile', style: AppStyles.appBarText),
-        centerTitle: true
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(15),
-        child: Column(
-          children: [
-            _buildSettingsCard(),
-            AppStyles.sizedBoxHeight40,
-            Text(_selectedLanguage == 'cat' ? 'Millors Temps' : _selectedLanguage == 'esp' ? 'Mejores Tiempos' : 'Best Times',
-            style: AppStyles.resultsProfile),
-            AppStyles.sizedBoxHeight20,
-            _buildTableHeader(),
-            const Divider(),
-            //_buildGameRow(_selectedLanguage == 'cat' ? 'Alfabètic' : _selectedLanguage == 'esp' ? 'Alfabético' : 'Alphabet', _results['alphabet']!, Icons.abc_rounded),
-            _buildGameRow(_selectedLanguage == 'cat' ? 'Numèric' : _selectedLanguage == 'esp' ? 'Numérico' : 'Numbers', _results['number']!, Icons.onetwothree_rounded),
-            _buildGameRow(_selectedLanguage == 'cat' ? 'Operacions' : _selectedLanguage == 'esp' ? 'Operaciones' : 'Operations', _results['operations']!, Icons.calculate_rounded),
-            _buildGameRow(_selectedLanguage == 'cat' ? 'Parelles' : _selectedLanguage == 'esp' ? 'Parejas' : 'Pairs', _results['parelles']!, Icons.grid_view_rounded),
-            _buildGameRow(_selectedLanguage == 'cat' ? 'Seqüència' : _selectedLanguage == 'esp' ? 'Secuencia' : 'Sequence', _results['sequencia']!, Icons.route_rounded),
-          ],
+    return MediaQuery(
+      data: MediaQuery.of(context).copyWith(textScaler: TextScaler.noScaling),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+              _selectedLanguage == 'cat' ? 'Perfil' : _selectedLanguage == 'esp' ? 'Perfil' : 'Profile',
+              style: AppStyles.appBarText
+          ),
+          centerTitle: true
+        ),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(15),
+          child: Column(
+            children: [
+              AppStyles.sizedBoxHeight20,
+              _buildSettingsCard(),
+              AppStyles.sizedBoxHeight60,
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  _selectedLanguage == 'cat' ? 'Millors Temps' : _selectedLanguage == 'esp' ? 'Mejores Tiempos' : 'Best Times',
+                  style: AppStyles.resultsProfile
+                ),
+              ),
+              AppStyles.sizedBoxHeight20,
+              _buildTableHeader(),
+              const Divider(),
+              _buildGameRow(_selectedLanguage == 'cat' ? 'Numèric' : _selectedLanguage == 'esp' ? 'Numérico' : 'Numbers', _results['number']!, Icons.onetwothree_rounded),
+              _buildGameRow(_selectedLanguage == 'cat' ? 'Operacions' : _selectedLanguage == 'esp' ? 'Operaciones' : 'Operations', _results['operations']!, Icons.calculate_rounded),
+              _buildGameRow(_selectedLanguage == 'cat' ? 'Parelles' : _selectedLanguage == 'esp' ? 'Parejas' : 'Pairs', _results['parelles']!, Icons.grid_view_rounded),
+              _buildGameRow(_selectedLanguage == 'cat' ? 'Seqüència' : _selectedLanguage == 'esp' ? 'Secuencia' : 'Sequence', _results['sequencia']!, Icons.route_rounded),
+            ],
+          ),
         ),
       ),
     );
   }
+
   Widget _buildTableHeader() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
       child: Row(
         children: [
-          Expanded(flex: 4, child: Text(_selectedLanguage == 'cat' ? 'Joc' : _selectedLanguage == 'esp' ? 'Juego' : 'Game', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15))),
-          Expanded(flex: 2, child: Center(child: FittedBox(fit: BoxFit.scaleDown, child: Text(_selectedLanguage == 'cat' ? 'Fàcil' : _selectedLanguage == 'esp' ? 'Fácil' : 'Easy', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green, fontSize: 15))))),
-          Expanded(flex: 2, child: Center(child: FittedBox(fit: BoxFit.scaleDown, child: Text(_selectedLanguage == 'cat' ? 'Mitjà' : _selectedLanguage == 'esp' ? 'Medio' : 'Medium', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.orange, fontSize: 15))))),
-          Expanded(flex: 2, child: Center(child: FittedBox(fit: BoxFit.scaleDown, child: Text(_selectedLanguage == 'cat' ? 'Difícil' : _selectedLanguage == 'esp' ? 'Difícil' : 'Hard', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.red, fontSize: 15))))),
+          Expanded(flex: 4, child: Text(_selectedLanguage == 'cat' ? 'Joc' : _selectedLanguage == 'esp' ? 'Juego' : 'Game', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24))),
+          Expanded(flex: 2, child: Center(child: FittedBox(fit: BoxFit.scaleDown, child: Text(_selectedLanguage == 'cat' ? 'Fàcil' : _selectedLanguage == 'esp' ? 'Fácil' : 'Easy', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green, fontSize: 24))))),
+          Expanded(flex: 2, child: Center(child: FittedBox(fit: BoxFit.scaleDown, child: Text(_selectedLanguage == 'cat' ? 'Mitjà' : _selectedLanguage == 'esp' ? 'Medio' : 'Medium', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.orange, fontSize: 24))))),
+          Expanded(flex: 2, child: Center(child: FittedBox(fit: BoxFit.scaleDown, child: Text(_selectedLanguage == 'cat' ? 'Difícil' : _selectedLanguage == 'esp' ? 'Difícil' : 'Hard', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.red, fontSize: 24))))),
         ],
       ),
     );
   }
+
   Widget _buildGameRow(String name, Map<String, String> levels, IconData icon) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 4.0),
@@ -131,26 +143,27 @@ class _ProfileState extends State<Profile> {
                     alignment: Alignment.centerLeft,
                     child: Text(
                       name,
-                      style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500)
+                      style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w500)
                     ),
                   ),
                 ),
               ],
             ),
           ),
-          Expanded(flex: 2, child: Text(levels['Facil']!, textAlign: TextAlign.center, style: const TextStyle(fontSize: 14))),
-          Expanded(flex: 2, child: Text(levels['Mitja']!, textAlign: TextAlign.center, style: const TextStyle(fontSize: 14))),
-          Expanded(flex: 2, child: Text(levels['Dificil']!, textAlign: TextAlign.center, style: const TextStyle(fontSize: 14))),
+          Expanded(flex: 2, child: Center(child: FittedBox(fit: BoxFit.scaleDown, child: Text(levels['Facil']!, style: const TextStyle(fontSize: 19))))),
+          Expanded(flex: 2, child: Center(child: FittedBox(fit: BoxFit.scaleDown, child: Text(levels['Mitja']!, style: const TextStyle(fontSize: 19))))),
+          Expanded(flex: 2, child: Center(child: FittedBox(fit: BoxFit.scaleDown, child: Text(levels['Dificil']!, style: const TextStyle(fontSize: 19))))),
         ],
       ),
     );
   }
+
   Widget _buildSettingsCard() {
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16),
         child: Column(
           children: [
             TextField(
@@ -164,22 +177,52 @@ class _ProfileState extends State<Profile> {
             AppStyles.sizedBoxHeight20,
             DropdownButtonFormField<String>(
               initialValue: _selectedLanguage,
+              isExpanded: true,
               decoration: InputDecoration(
+                labelStyle: const TextStyle(fontSize: 16),
                 labelText: _selectedLanguage == 'cat' ? 'Idioma' : _selectedLanguage == 'esp' ? 'Idioma' : 'Language',
                 prefixIcon: const Icon(Icons.language),
               ),
+              selectedItemBuilder: (BuildContext context) {
+                return ['cat', 'esp', 'eng'].map<Widget>((String item) {
+                  String text = item == 'cat' ? 'Català' : item == 'esp' ? 'Español' : 'English';
+                  return Text(
+                    text,
+                    style: const TextStyle(fontSize: 16),
+                  );
+                }).toList();
+              },
               items: const [
-                DropdownMenuItem(value: 'cat', child: Text('Català')),
-                DropdownMenuItem(value: 'esp', child: Text('Español')),
-                DropdownMenuItem(value: 'eng', child: Text('English'))
+                DropdownMenuItem(
+                  value: 'cat',
+                  child: Text('Català', style: TextStyle(fontSize: 16))
+                ),
+                DropdownMenuItem(
+                  value: 'esp',
+                  child: Text('Español', style: TextStyle(fontSize: 16))
+                ),
+                DropdownMenuItem(
+                  value: 'eng',
+                  child: Text('English', style: TextStyle(fontSize: 16))
+                ),
               ],
               onChanged: (val) => setState(() => _selectedLanguage = val!),
             ),
             AppStyles.sizedBoxHeight20,
             ElevatedButton(
               onPressed: _saveSettings,
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.black, foregroundColor: Colors.white),
-              child: Text(_selectedLanguage == 'cat' ? 'Guardar' : _selectedLanguage == 'esp' ? 'Guardar' : 'Save'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.black,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+              ),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(_selectedLanguage == 'cat' ? 'Guardar' : _selectedLanguage == 'esp' ? 'Guardar' : 'Save', style: TextStyle(fontSize: 18))
+                )
+              ),
             ),
           ],
         ),

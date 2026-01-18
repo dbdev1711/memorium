@@ -57,7 +57,7 @@ class AppStyles {
   );
 
   static const resultsProfile = TextStyle(
-    fontSize: 30,
+    fontSize: 40,
     color: Colors.black,
     fontWeight: FontWeight.bold
   );
